@@ -9,11 +9,13 @@ class CGD_user_preferences(bpy.types.AddonPreferences):
 
     show_tool: bpy.props.BoolProperty(default=False)
     show_action_bakery: bpy.props.BoolProperty(default=False)
-
+    toogle_constraints: bpy.props.BoolProperty(default=False)
+    
     def draw(self, context):
         layout = self.layout
         layout.prop(self, "side_panel", text="Show in Side Panel")
         layout.prop(self, "armature_data", text="Show in Data Properties")
+        layout.prop(self, "toogle_constraints", text="Top Bar Toogle Constraint")
 
 classes = [CGD_user_preferences]
 

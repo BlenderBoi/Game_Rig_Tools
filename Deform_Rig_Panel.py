@@ -64,16 +64,17 @@ def draw_panel(self, context, layout):
         row = layout.row(align=True)
         if context.mode == "OBJECT":
             row.operator("cgd.constraint_to_armature_name", text="Constraint Armature by Bone Name")
+        row = layout.row(align=True)
         if context.mode == "POSE":
             row.operator("cgd.constraint_selected_bone_to_armature_name", text="Constraint Selected Bone to Armature By Name")
-        row.operator("cgd.remove_non_deform_bone", text="Remove Non Deform bone")
+        row.operator("cgd.remove_non_deform_bone", text="Remove Non Deform Bones")
 
 
         layout.separator()
         col = layout.column(align=True)
-        col.operator("cgd.remove_bone_shape", text="Remove Bone Shape")
+        col.operator("cgd.remove_bone_shape", text="Remove Bone Shapes")
         col.operator("cgd.remove_bbone", text="Remove BBone")
-        col.operator("cgd.remove_custom_property", text="Remove Custom Property")
+        col.operator("cgd.remove_custom_property", text="Remove Custom Properties")
         col.operator("cgd.remove_animation_data", text="Remove Animation Data and Drivers")
 
         layout.operator("cgd.bake_nla_action_push_to_armature", text="Bake NLA Action and Push to Armature (Legacy)")

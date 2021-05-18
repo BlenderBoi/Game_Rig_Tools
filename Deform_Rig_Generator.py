@@ -1,5 +1,11 @@
 import bpy
 from bpy_extras import anim_utils
+import os
+
+script_file = os.path.realpath(__file__)
+addon_directory = os.path.dirname(script_file)
+addon_name = os.path.basename(addon_directory)
+
 
 constraint_type = [("TRANSFORM","Copy Transform","Copy Transform"),("LOTROT","Copy Location & Copy Rotation","Lot Rot")]
 
@@ -78,13 +84,13 @@ class CGD_Generate_Game_Rig(bpy.types.Operator):
 
             layout.label(text="Deform Armature")
             layout.prop(self, "Deform_Remove_BBone", text="Remove BBone")
-            layout.prop(self, "Deform_Move_Bone_to_Layer1", text="Move Bone to Layer 1")
+            layout.prop(self, "Deform_Move_Bone_to_Layer1", text="Move Bones to Layer 1")
             layout.prop(self, "Deform_Set_Inherit_Rotation_True", text="Set Inherit Rotation True")
-            layout.prop(self, "Deform_Remove_Non_Deform_Bone", text="Remove Non Deform Bone")
+            layout.prop(self, "Deform_Remove_Non_Deform_Bone", text="Remove Non Deform Bones")
             layout.prop(self, "Deform_Unlock_Transform", text="Unlock Transform")
-            layout.prop(self, "Deform_Remove_Shape", text="Remove Bone Shape")
+            layout.prop(self, "Deform_Remove_Shape", text="Remove Bone Shapes")
             layout.prop(self, "Deform_Remove_All_Constraints", text="Remove Old Constraints")
-            layout.prop(self, "Deform_Copy_Transform", text="Add Copy Transform")
+            layout.prop(self, "Deform_Copy_Transform", text="Constrain Deform Rig to Animation Rig")
             layout.prop(self, "Deform_Bind_to_Deform_Rig", text="Bind to Deform Rig")
 
             layout.prop(self, "Remove_Animation_Data", text="Remove Animation Data & Drivers")
@@ -400,10 +406,13 @@ class CGD_Constraint_To_Armature(bpy.types.Operator):
 def draw_item(self, context):
     layout = self.layout
     row = layout.row(align=True)
+    
+    addon_preferences = context.preferences.addons[addon_name].preferences
 
     if context.mode == "POSE":
-        row.operator("cgd.toogle_constraint", text="Mute Constraints").mute=True
-        row.operator("cgd.toogle_constraint", text="Unmute Constraints").mute=False
+        if addon_preferences.toogle_constraints:
+            row.operator("cgd.toogle_constraint", text="Mute Constraints").mute=True
+            row.operator("cgd.toogle_constraint", text="Unmute Constraints").mute=False
 
 
 
