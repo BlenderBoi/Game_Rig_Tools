@@ -62,12 +62,14 @@ def draw_panel(self, context, layout):
 
 
         row = layout.row(align=True)
+
         if context.mode == "OBJECT":
-            row.operator("cgd.constraint_to_armature_name", text="Constraint Armature by Bone Name")
-        row = layout.row(align=True)
+            layout.operator("cgd.constraint_to_armature_name", text="Constraint Armature by Bone Name")
         if context.mode == "POSE":
-            row.operator("cgd.constraint_selected_bone_to_armature_name", text="Constraint Selected Bone to Armature By Name")
-        row.operator("cgd.remove_non_deform_bone", text="Remove Non Deform Bones")
+            layout.operator("cgd.constraint_selected_bone_to_armature_name", text="Constraint Selected Bone to Armature By Name")
+
+
+        layout.operator("cgd.remove_non_deform_bone", text="Remove Non Deform Bones")
 
 
         layout.separator()

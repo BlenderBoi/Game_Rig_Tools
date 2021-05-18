@@ -8,6 +8,7 @@ addon_name = os.path.basename(addon_directory)
 
 
 constraint_type = [("TRANSFORM","Copy Transform","Copy Transform"),("LOTROT","Copy Location & Copy Rotation","Lot Rot")]
+ENUM_Extract_Mode = [("SELECTED","Selected","Selected"),("DEFORM","Deform","Deform"), ("SELECTED_DEFORM", "Selected Deform", "Selected Deform")]
 
 class CGD_Generate_Game_Rig(bpy.types.Operator):
     """This will Generate a Deform Game Rig based on the step in CGDive Video"""
@@ -15,7 +16,7 @@ class CGD_Generate_Game_Rig(bpy.types.Operator):
     bl_label = "Generate Game Rig"
 
 
-
+    Extract_Mode: bpy.props.EnumProperty(items=ENUM_Extract_Mode, default="DEFORM")
     Flat_Hierarchy: bpy.props.BoolProperty(default=False)
     Disconnect_Bone: bpy.props.BoolProperty(default=True)
 
@@ -31,6 +32,7 @@ class CGD_Generate_Game_Rig(bpy.types.Operator):
     Deform_Move_Bone_to_Layer1 : bpy.props.BoolProperty(default=True)
 
     Deform_Set_Inherit_Rotation_True: bpy.props.BoolProperty(default=True)
+    Deform_Set_Inherit_Scale_Full: bpy.props.BoolProperty(default=True)
     Deform_Set_Local_Location_True: bpy.props.BoolProperty(default=True)
 
     Deform_Remove_Non_Deform_Bone: bpy.props.BoolProperty(default=True)
@@ -70,6 +72,8 @@ class CGD_Generate_Game_Rig(bpy.types.Operator):
         layout.prop(self, "Disconnect_Bone", text="Disconnect Bone")
         layout.prop(self, "Constraint_Type", text="Constraint Type")
 
+        layout.prop(self, "Extract_Mode", text="Extract Mode")
+
         layout.prop(self, "Show_Option", text="Options")
 
 
@@ -85,14 +89,18 @@ class CGD_Generate_Game_Rig(bpy.types.Operator):
             layout.label(text="Deform Armature")
             layout.prop(self, "Deform_Remove_BBone", text="Remove BBone")
             layout.prop(self, "Deform_Move_Bone_to_Layer1", text="Move Bones to Layer 1")
+
             layout.prop(self, "Deform_Set_Inherit_Rotation_True", text="Set Inherit Rotation True")
-            layout.prop(self, "Deform_Remove_Non_Deform_Bone", text="Remove Non Deform Bones")
+            layout.prop(self, "Deform_Set_Inherit_Scale_Full", text="Set Inherit Scale Full")
+            layout.prop(self, "Deform_Set_Local_Location_True", text="Set Local Location Bone Setting True")
+
+            layout.prop(self, "Deform_Remove_Non_Deform_Bone", text="Remove Non Deform / Selected Bones")
+
             layout.prop(self, "Deform_Unlock_Transform", text="Unlock Transform")
             layout.prop(self, "Deform_Remove_Shape", text="Remove Bone Shapes")
             layout.prop(self, "Deform_Remove_All_Constraints", text="Remove Old Constraints")
             layout.prop(self, "Deform_Copy_Transform", text="Constrain Deform Rig to Animation Rig")
             layout.prop(self, "Deform_Bind_to_Deform_Rig", text="Bind to Deform Rig")
-
             layout.prop(self, "Remove_Animation_Data", text="Remove Animation Data & Drivers")
             layout.prop(self, "Remove_Custom_Properties", text="Remove Custom Properties")
 
@@ -105,7 +113,7 @@ class CGD_Generate_Game_Rig(bpy.types.Operator):
 
         object = context.object
 
-
+        bpy.ops.object.mode_set(mode = 'OBJECT')
 
 
         if object.type == "ARMATURE":
@@ -181,6 +189,9 @@ class CGD_Generate_Game_Rig(bpy.types.Operator):
                 if self.Deform_Set_Local_Location_True:
                      bone.use_local_location = True
 
+                if self.Deform_Set_Inherit_Scale_Full:
+                     bone.inherit_scale = "FULL"
+
                 if self.Deform_Move_Bone_to_Layer1:
                     for i, layer in enumerate(bone.layers):
                         if i == 0:
@@ -189,9 +200,18 @@ class CGD_Generate_Game_Rig(bpy.types.Operator):
                             bone.layers[i] = False
 
                 if self.Deform_Remove_Non_Deform_Bone:
-                    if not bone.use_deform:
-                        Edit_Bones.remove(bone)
+                    if self.Extract_Mode == "SELECTED":
+                        if not bone.select:
+                            Edit_Bones.remove(bone)
 
+                    if self.Extract_Mode == "DEFORM":
+                        if not bone.use_deform:
+                            Edit_Bones.remove(bone)
+
+                    if self.Extract_Mode == "SELECTED_DEFORM":
+                        if not bone.select:
+                            if not bone.use_deform:
+                                Edit_Bones.remove(bone)
 
 
             bpy.ops.object.mode_set(mode = 'POSE')
@@ -406,7 +426,7 @@ class CGD_Constraint_To_Armature(bpy.types.Operator):
 def draw_item(self, context):
     layout = self.layout
     row = layout.row(align=True)
-    
+
     addon_preferences = context.preferences.addons[addon_name].preferences
 
     if context.mode == "POSE":
