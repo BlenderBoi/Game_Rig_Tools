@@ -94,7 +94,7 @@ class CGD_Generate_Game_Rig(bpy.types.Operator):
             layout.prop(self, "Deform_Set_Inherit_Scale_Full", text="Set Inherit Scale Full")
             layout.prop(self, "Deform_Set_Local_Location_True", text="Set Local Location Bone Setting True")
 
-            layout.prop(self, "Deform_Remove_Non_Deform_Bone", text="Remove Non Deform / Selected Bones")
+            layout.prop(self, "Deform_Remove_Non_Deform_Bone", text="Remove Non Deform / Non Selected Bones")
 
             layout.prop(self, "Deform_Unlock_Transform", text="Unlock Transform")
             layout.prop(self, "Deform_Remove_Shape", text="Remove Bone Shapes")
