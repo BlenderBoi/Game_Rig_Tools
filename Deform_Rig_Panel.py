@@ -120,7 +120,7 @@ class CGD_PT_Deform_Rig_Side_Panel(bpy.types.Panel):
     bl_label = "Game Rig Tools"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
-    bl_category = "Generate Deform Rig"
+    bl_category = "Game Rig Tools"
 
     @classmethod
     def poll(cls, context):
