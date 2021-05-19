@@ -1,6 +1,6 @@
 
 bl_info = {
-    "name": "Generate Deform Rig",
+    "name": "Game Rig Tools",
     "author": "BlenderBoi",
     "version": (1, 2),
     "blender": (2, 80, 0),
