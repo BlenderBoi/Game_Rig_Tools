@@ -228,9 +228,9 @@ def unregister():
     del bpy.types.Action.loop
     del bpy.types.Action.bake_checkbox
 
-    del bpy.Scene.Action.bake_deform_armature
-    del bpy.Scene.Action.bake_control_armature
-    del bpy.Scene.Action.Push_to_NLA
+    del bpy.types.Scene.bake_deform_armature
+    del bpy.types.Scene.bake_control_armature
+    del bpy.types.Scene.Push_to_NLA
 
     del bpy.types.Scene.Unmute_Before_Bake
     del bpy.types.Scene.Mute_After_Bake
