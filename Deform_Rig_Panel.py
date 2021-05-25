@@ -17,6 +17,10 @@ def draw_action_bakery(self, context, layout):
         row.prop(addon_preferences, "show_action_bakery", text="Action Bakery", emboss=False, icon="TRIA_DOWN")
         layout.template_list("CGD_UL_Action_Bakery_List", "", bpy.data, "actions", scn, "action_bakery_index")
 
+        row = layout.row(align=True)
+        row.operator("cgd.check_all_for_bake", text="Select All").mode = True
+        row.operator("cgd.check_all_for_bake", text="Deselect All").mode = False
+
         if len(bpy.data.actions) > 0:
             active_action = bpy.data.actions[scn.action_bakery_index]
 

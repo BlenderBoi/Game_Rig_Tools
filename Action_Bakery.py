@@ -35,7 +35,7 @@ class CGD_Bake_Action_Bakery(bpy.types.Operator):
 
 
     Mode: bpy.props.EnumProperty(items=ENUM_name_addon,default="REPLACE")
-    TEXT01: bpy.props.StringProperty(default="CTRL_")
+    TEXT01: bpy.props.StringProperty(default="")
     TEXT02: bpy.props.StringProperty(default="")
 
 
@@ -82,10 +82,18 @@ class CGD_Bake_Action_Bakery(bpy.types.Operator):
                             for constraint in bone.constraints:
                                 constraint.mute = False
 
+                    # nla_track_state = []
 
                     for action in bpy.data.actions:
 
                         if action.bake_checkbox:
+
+
+
+                            for nla_track in control_rig.animation_data.nla_tracks:
+                                # nla_track_state.append((nla_track, nla_track.mute))
+                                nla_track.mute = True
+
                             control_rig.animation_data.action = action
 
                             if action.loop:
@@ -111,14 +119,23 @@ class CGD_Bake_Action_Bakery(bpy.types.Operator):
                                 deform_rig.animation_data.nla_tracks.new().strips.new(Baked_Action[0].name, action.frame_range[0], Baked_Action[0])
 
 
+                    # for nla_track_pair in nla_track_state:
+                    #     print(nla_track_pair[1])
+                    #     nla_track_pair[0].mute = nla_track_pair[1]
+
                     if scn.Mute_After_Bake:
                         Pose_Bone = deform_rig.pose.bones
                         for bone in Pose_Bone:
                             for constraint in bone.constraints:
                                 constraint.mute = True
 
-                    control_rig.animation_data.action = None
-                    deform_rig.animation_data.action = None
+                    if control_rig.animation_data:
+                        if control_rig.animation_data.action:
+                            control_rig.animation_data.action = None
+
+                    if deform_rig.animation_data:
+                        if deform_rig.animation_data.action:
+                            deform_rig.animation_data.action = None
 
 
 
@@ -141,6 +158,28 @@ class CGD_Bake_Action_Bakery(bpy.types.Operator):
 
 
 
+class CGD_Check_Action_Bakery(bpy.types.Operator):
+
+    bl_idname = "cgd.check_all_for_bake"
+    bl_label = "Select All"
+    bl_info = {'UNDO', "REGISTER"}
+
+    mode: bpy.props.BoolProperty()
+
+
+
+    def execute(self, context):
+
+
+        actions = bpy.data.actions
+
+        for action in actions:
+            action.bake_checkbox = self.mode
+
+        return {'FINISHED'}
+
+
+
 
 
 
@@ -154,7 +193,8 @@ class CGD_Bake_Action_Bakery(bpy.types.Operator):
 
 classes = (
         CGD_UL_Action_Bakery_List,
-        CGD_Bake_Action_Bakery
+        CGD_Bake_Action_Bakery,
+        CGD_Check_Action_Bakery
         )
 
 
