@@ -1,4 +1,29 @@
 import bpy
+import os
+from . import Deform_Rig_Panel
+
+script_file = os.path.realpath(__file__)
+addon_directory = os.path.dirname(script_file)
+addon_name = os.path.basename(addon_directory)
+
+
+def update_panel(self, context):
+
+    addon_preferences = context.preferences.addons[addon_name].preferences
+    message = ": Updating Panel locations has failed"
+    try:
+
+        if "bl_rna" in Deform_Rig_Panel.CGD_PT_Deform_Rig_Side_Panel.__dict__:
+            bpy.utils.unregister_class(Deform_Rig_Panel.CGD_PT_Deform_Rig_Side_Panel)
+
+
+        Deform_Rig_Panel.CGD_PT_Deform_Rig_Side_Panel.bl_category = addon_preferences.side_panel_name
+        bpy.utils.register_class(Deform_Rig_Panel.CGD_PT_Deform_Rig_Side_Panel)
+
+    except Exception as e:
+        print("\n[{}]\n{}\n\nError:\n{}".format(__name__, message, e))
+        pass
+
 
 
 class CGD_user_preferences(bpy.types.AddonPreferences):
@@ -10,9 +35,13 @@ class CGD_user_preferences(bpy.types.AddonPreferences):
     show_tool: bpy.props.BoolProperty(default=False)
     show_action_bakery: bpy.props.BoolProperty(default=False)
     toogle_constraints: bpy.props.BoolProperty(default=False)
-    
+
+    side_panel_name: bpy.props.StringProperty(default="Game Rig Tools", update=update_panel)
+
     def draw(self, context):
         layout = self.layout
+        layout.prop(self, "side_panel_name", text="Tab Catagory")
+
         layout.prop(self, "side_panel", text="Show in Side Panel")
         layout.prop(self, "armature_data", text="Show in Data Properties")
         layout.prop(self, "toogle_constraints", text="Top Bar Toogle Constraint")
@@ -25,7 +54,7 @@ def register():
     for cls in classes:
         bpy.utils.register_class(cls)
 
-
+    update_panel(None, bpy.context)
 
 
 

@@ -95,7 +95,7 @@ def draw_panel(self, context, layout):
 
 class CGD_PT_Deform_Rig_DATA_Panel(bpy.types.Panel):
 
-    bl_label = "Generate Deform Rig"
+    bl_label = "Game Rig Tools"
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
     bl_context = "data"
@@ -155,6 +155,7 @@ def register():
 
     for cls in classes:
         bpy.utils.register_class(cls)
+
 
 
 def unregister():

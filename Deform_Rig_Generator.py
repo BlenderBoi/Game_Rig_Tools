@@ -14,13 +14,13 @@ class CGD_Generate_Game_Rig(bpy.types.Operator):
     """This will Generate a Deform Game Rig based on the step in CGDive Video"""
     bl_idname = "cgd.generate_game_rig"
     bl_label = "Generate Game Rig"
-
+    bl_info = {'UNDO', "REGISTER"}
 
     Extract_Mode: bpy.props.EnumProperty(items=ENUM_Extract_Mode, default="DEFORM")
     Flat_Hierarchy: bpy.props.BoolProperty(default=False)
     Disconnect_Bone: bpy.props.BoolProperty(default=True)
 
-    Constraint_Type: bpy.props.EnumProperty(items=constraint_type, default="TRANSFORM")
+    Constraint_Type: bpy.props.EnumProperty(items=constraint_type, default="LOTROT")
 
     Animator_Remove_BBone : bpy.props.BoolProperty(default=True)
     Animator_Disable_Deform : bpy.props.BoolProperty(default=False)
