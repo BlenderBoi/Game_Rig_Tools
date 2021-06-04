@@ -25,7 +25,7 @@ class CGD_Generate_Game_Rig(bpy.types.Operator):
     Animator_Remove_BBone : bpy.props.BoolProperty(default=True)
     Animator_Disable_Deform : bpy.props.BoolProperty(default=False)
 
-
+    Parent_To_Deform_Rig: bpy.props.BoolProperty(default=True)
     Deform_Armature_Name: bpy.props.StringProperty()
     Deform_Remove_BBone : bpy.props.BoolProperty(default=True)
 
@@ -101,6 +101,9 @@ class CGD_Generate_Game_Rig(bpy.types.Operator):
             layout.prop(self, "Deform_Remove_All_Constraints", text="Remove Old Constraints")
             layout.prop(self, "Deform_Copy_Transform", text="Constrain Deform Rig to Animation Rig")
             layout.prop(self, "Deform_Bind_to_Deform_Rig", text="Bind to Deform Rig")
+            if self.Deform_Bind_to_Deform_Rig:
+                layout.prop(self, "Parent_To_Deform_Rig", text="Parent Mesh Object to Deform Rig")
+
             layout.prop(self, "Remove_Animation_Data", text="Remove Animation Data & Drivers")
             layout.prop(self, "Remove_Custom_Properties", text="Remove Custom Properties")
 
@@ -288,6 +291,9 @@ class CGD_Generate_Game_Rig(bpy.types.Operator):
                         if modifier.type == "ARMATURE":
                             if modifier.object == object:
                                 modifier.object = game_rig
+                                if self.Parent_To_Deform_Rig:
+                                    obj.parent = game_rig
+                                    obj.matrix_parent_inverse = game_rig.matrix_world.inverted()
 
 
         for bone in object.data.bones:
