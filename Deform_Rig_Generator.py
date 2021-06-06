@@ -14,7 +14,8 @@ class CGD_Generate_Game_Rig(bpy.types.Operator):
     """This will Generate a Deform Game Rig based on the step in CGDive Video"""
     bl_idname = "cgd.generate_game_rig"
     bl_label = "Generate Game Rig"
-    bl_info = {'UNDO', "REGISTER"}
+    bl_options = {'UNDO'}
+
 
     Extract_Mode: bpy.props.EnumProperty(items=ENUM_Extract_Mode, default="DEFORM")
     Flat_Hierarchy: bpy.props.BoolProperty(default=False)
