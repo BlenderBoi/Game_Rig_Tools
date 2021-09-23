@@ -52,8 +52,17 @@ def draw_panel(self, context, layout):
     addon_preferences = context.preferences.addons[addon_name].preferences
 
     row = layout.row(align=True)
-    row.operator("cgd.toogle_constraint", text="Mute Constraints").mute=True
-    row.operator("cgd.toogle_constraint", text="Unmute Constraints").mute=False
+
+    operator = row.operator("gamerigtool.toogle_constraint", text="Mute")
+    operator.mute = True
+    operator.use_selected = addon_preferences.use_selected
+
+    operator = row.operator("gamerigtool.toogle_constraint", text="Unmute")
+    operator.mute = False
+    operator.use_selected = addon_preferences.use_selected
+
+    row.prop(addon_preferences, "use_selected", text="", icon="RESTRICT_SELECT_OFF")
+
     layout.operator("cgd.generate_game_rig", text="Generate Deform Rig")
 
     row = layout.row(align=True)
@@ -61,29 +70,28 @@ def draw_panel(self, context, layout):
 
     if addon_preferences.show_tool:
 
-
         row.prop(addon_preferences, "show_tool", text="Semi Auto Toolkit", emboss=False, icon="TRIA_DOWN")
 
+        # if context.mode == "OBJECT":
+        #     layout.operator("cgd.constraint_to_armature_name", text="Constraint Armature by Bone Name")
+        # if context.mode == "POSE":
+        #     layout.operator("cgd.constraint_selected_bone_to_armature_name", text="Constraint Selected Bone to Armature By Name")
+        #
+        # layout.operator("cgd.remove_non_deform_bone", text="Remove Non Deform Bones")
 
-        row = layout.row(align=True)
-
-        if context.mode == "OBJECT":
-            layout.operator("cgd.constraint_to_armature_name", text="Constraint Armature by Bone Name")
-        if context.mode == "POSE":
-            layout.operator("cgd.constraint_selected_bone_to_armature_name", text="Constraint Selected Bone to Armature By Name")
-
-
-        layout.operator("cgd.remove_non_deform_bone", text="Remove Non Deform Bones")
-
+        layout.operator("gamerigtool.constraint_to_armature_name", text="Constraint to Armature Name")
+        layout.operator("gamerigtool.remove_non_deform_bone", text="Remove Non Deform Bone")
 
         layout.separator()
         col = layout.column(align=True)
-        col.operator("cgd.remove_bone_shape", text="Remove Bone Shapes")
-        col.operator("cgd.remove_bbone", text="Remove BBone")
-        col.operator("cgd.remove_custom_property", text="Remove Custom Properties")
-        col.operator("cgd.remove_animation_data", text="Remove Animation Data and Drivers")
 
-        layout.operator("cgd.bake_nla_action_push_to_armature", text="Bake NLA Action and Push to Armature (Legacy)")
+        col.operator("gamerigtool.batch_rename_actions", text="Batch Rename Actions")
+        col.operator("gamerigtool.remove_animation_data", text="Remove Animation Data and Drivers")
+        col.operator("gamerigtool.remove_bbone", text="Remove BBone")
+        col.operator("gamerigtool.remove_bone_shape", text="Remove Bone Shapes")
+        col.operator("gamerigtool.remove_custom_property", text="Remove Custom Properties")
+
+
 
 
 

@@ -38,6 +38,8 @@ class CGD_user_preferences(bpy.types.AddonPreferences):
 
     side_panel_name: bpy.props.StringProperty(default="Game Rig Tools", update=update_panel)
 
+    use_selected: bpy.props.BoolProperty(default=False)
+
     def draw(self, context):
         layout = self.layout
         layout.prop(self, "side_panel_name", text="Tab Catagory")

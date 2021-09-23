@@ -1,10 +1,7 @@
 import bpy
 from bpy_extras import anim_utils
 
-
-
 class CGD_UL_Action_Bakery_List(bpy.types.UIList):
-
 
     def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
 
@@ -12,17 +9,12 @@ class CGD_UL_Action_Bakery_List(bpy.types.UIList):
         ob = data
         row = layout.row(align=True)
 
-
         row.prop(item, "bake_checkbox", text="", emboss=True)
         row.prop(item, "name", text="", emboss=False)
 
         row = layout.row(align=True)
         row.alignment = "RIGHT"
         row.prop(item, "loop", text="Loop", emboss=True)
-
-
-
-
 
 ENUM_name_addon = [("PREFIX","Prefix","Prefix"),("SUFFIX","Suffix","Suffix"),("REPLACE","Replace","Replace")]
 
