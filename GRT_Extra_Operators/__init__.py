@@ -8,7 +8,12 @@ from . import GRT_Remove_Custom_Property
 from . import GRT_Remove_Non_Deform_Bone
 from . import GRT_Batch_Rename_Actions
 
-modules = [GRT_Batch_Rename_Actions, GRT_Constraint_To_Armature, GRT_Constraint_Toogle, GRT_Remove_Animation_Data, GRT_Remove_BBone, GRT_Remove_Bone_Shape, GRT_Remove_Custom_Property, GRT_Remove_Non_Deform_Bone]
+from . import GRT_Clear_All_Bones_Constraints
+from . import GRT_Move_All_Bones_To_Layer
+from . import GRT_Unlock_Bones_Transform
+
+
+modules = [GRT_Unlock_Bones_Transform, GRT_Move_All_Bones_To_Layer, GRT_Clear_All_Bones_Constraints, GRT_Batch_Rename_Actions, GRT_Constraint_To_Armature, GRT_Constraint_Toogle, GRT_Remove_Animation_Data, GRT_Remove_BBone, GRT_Remove_Bone_Shape, GRT_Remove_Custom_Property, GRT_Remove_Non_Deform_Bone]
 
 def register():
 

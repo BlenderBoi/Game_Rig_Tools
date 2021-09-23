@@ -84,14 +84,14 @@ def draw_panel(self, context, layout):
 
         layout.separator()
         col = layout.column(align=True)
-
+        col.operator("gamerigtool.clear_all_bones_constraints", text="Clear All Bones Constraints")
         col.operator("gamerigtool.batch_rename_actions", text="Batch Rename Actions")
         col.operator("gamerigtool.remove_animation_data", text="Remove Animation Data and Drivers")
         col.operator("gamerigtool.remove_bbone", text="Remove BBone")
         col.operator("gamerigtool.remove_bone_shape", text="Remove Bone Shapes")
         col.operator("gamerigtool.remove_custom_property", text="Remove Custom Properties")
-
-
+        col.operator("gamerigtool.move_all_bones_to_layer", text="Move All Bones to Layer")
+        col.operator("gamerigtool.unlock_bones_transform", text="Unlock Bones Transform")
 
 
 
