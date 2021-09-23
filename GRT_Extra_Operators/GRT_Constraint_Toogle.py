@@ -7,7 +7,8 @@ class GRT_Constraint_Toogle(bpy.types.Operator):
 
     bl_idname = "gamerigtool.toogle_constraint"
     bl_label = "Toogle Constraints"
-
+    bl_options = {'REGISTER', 'UNDO'}
+    
     mute : bpy.props.BoolProperty()
     use_selected: bpy.props.BoolProperty()
 

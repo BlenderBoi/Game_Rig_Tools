@@ -8,6 +8,7 @@ class GRT_Batch_Rename_Actions(bpy.types.Operator):
 
     bl_idname = "gamerigtool.batch_rename_actions"
     bl_label = "Batch Rename Actions"
+    bl_options = {'REGISTER', 'UNDO'}
 
     mode: bpy.props.EnumProperty(items=Mode)
     name_01: bpy.props.StringProperty()

@@ -5,7 +5,8 @@ class GRT_Remove_Custom_Property(bpy.types.Operator):
 
     bl_idname = "gamerigtool.remove_custom_property"
     bl_label = "Remove Custom Property"
-
+    bl_options = {'REGISTER', 'UNDO'}
+    
     data: bpy.props.BoolProperty(default=True)
     object: bpy.props.BoolProperty(default=True)
     posebone: bpy.props.BoolProperty(default=True)

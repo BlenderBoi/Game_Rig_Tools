@@ -6,7 +6,8 @@ class GRT_Constraint_To_Armature(bpy.types.Operator):
 
     bl_idname = "gamerigtool.constraint_to_armature_name"
     bl_label = "Constraint to Armature (Name Based)"
-
+    bl_options = {'REGISTER', 'UNDO'}
+    
     Source_Armature: bpy.props.StringProperty()
     Target_Armature: bpy.props.StringProperty()
 

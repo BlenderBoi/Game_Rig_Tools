@@ -5,7 +5,8 @@ class GRT_Remove_Non_Deform_Bone(bpy.types.Operator):
 
     bl_idname = "gamerigtool.remove_non_deform_bone"
     bl_label = "Remove Non Deform Bone"
-
+    bl_options = {'REGISTER', 'UNDO'}
+    
     move_bone_to_layer_1: bpy.props.BoolProperty(default=True)
     remove_constraints: bpy.props.BoolProperty(default=True)
     unlock_transform: bpy.props.BoolProperty(default=True)

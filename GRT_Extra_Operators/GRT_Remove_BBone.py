@@ -4,7 +4,8 @@ class GRT_Remove_BBone(bpy.types.Operator):
 
     bl_idname = "gamerigtool.remove_bbone"
     bl_label = "Remove BBone"
-
+    bl_options = {'REGISTER', 'UNDO'}
+    
     def execute(self, context):
 
         for object in context.selected_objects:
