@@ -32,7 +32,10 @@ class CGD_user_preferences(bpy.types.AddonPreferences):
     side_panel: bpy.props.BoolProperty(default=True)
     armature_data: bpy.props.BoolProperty(default=False)
 
-    show_tool: bpy.props.BoolProperty(default=False)
+    show_cleanup: bpy.props.BoolProperty(default=False)
+    show_utility: bpy.props.BoolProperty(default=False)
+    show_armature_display: bpy.props.BoolProperty(default=False)
+
     show_action_bakery: bpy.props.BoolProperty(default=False)
     toogle_constraints: bpy.props.BoolProperty(default=False)
 

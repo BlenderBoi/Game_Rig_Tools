@@ -1,12 +1,12 @@
 import bpy
-
+from .. import Utility
 
 class GRT_Remove_Custom_Property(bpy.types.Operator):
 
     bl_idname = "gamerigtool.remove_custom_property"
     bl_label = "Remove Custom Property"
     bl_options = {'REGISTER', 'UNDO'}
-    
+
     data: bpy.props.BoolProperty(default=True)
     object: bpy.props.BoolProperty(default=True)
     posebone: bpy.props.BoolProperty(default=True)
@@ -36,6 +36,7 @@ class GRT_Remove_Custom_Property(bpy.types.Operator):
     def execute(self, context):
 
         object = context.object
+        context.view_layer.update()
 
         for object in context.selected_objects:
 
@@ -44,23 +45,28 @@ class GRT_Remove_Custom_Property(bpy.types.Operator):
                 if self.object:
                     if object.get("_RNA_UI"):
                         for property in object["_RNA_UI"]:
-                            del object[property]
+                            if object.get(property):
+                                del object[property]
 
-                if self.armature:
+                if self.data:
                     if object.data.get("_RNA_UI"):
                         for property in object.data["_RNA_UI"]:
-                            del object.data[property]
+                            if object.data.get(property):
+                                del object.data[property]
 
 
                 if object.type == "ARMATURE":
 
                     if self.posebone:
                         Pose_Bones = object.pose.bones
+
                         for bone in Pose_Bones:
 
                             if bone.get("_RNA_UI"):
                                 for property in bone["_RNA_UI"]:
-                                    del bone[property]
+
+                                    if bone.get(property):
+                                        del bone[property]
 
                     if self.editbone:
 
@@ -74,10 +80,13 @@ class GRT_Remove_Custom_Property(bpy.types.Operator):
 
                             if bone.get("_RNA_UI"):
                                 for property in bone["_RNA_UI"]:
-                                    del bone[property]
+
+                                    if bone.get(property):
+                                        del bone[property]
                         bpy.ops.object.mode_set(mode = 'OBJECT')
 
-
+        context.view_layer.update()
+        Utility.update_UI()
         return {'FINISHED'}
 
 

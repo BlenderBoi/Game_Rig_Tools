@@ -1,9 +1,33 @@
 import bpy
 import os
+from . import Utility
 
 script_file = os.path.realpath(__file__)
 addon_directory = os.path.dirname(script_file)
 addon_name = os.path.basename(addon_directory)
+
+def draw_armature_visibility_options(self, context, layout):
+
+    addon_preferences = context.preferences.addons[addon_name].preferences
+
+    object = context.object
+
+    if object:
+        if object.type == "ARMATURE":
+            if Utility.draw_subpanel(addon_preferences, addon_preferences.show_armature_display, "show_armature_display", "Armature Display", layout):
+
+
+                layout.prop(object.data, "display_type", text="Display As")
+                layout.prop(object.data, "show_names", text="Names")
+                layout.prop(object.data, "show_group_colors", text="Group Colors")
+                layout.prop(object, "show_in_front", text="In Front")
+
+                row = layout.row(align=True)
+
+                row.prop(object.data, "show_axes", text="Show Axes")
+                row.prop(object.data, "axes_position", text="Position")
+
+
 
 
 def draw_action_bakery(self, context, layout):
@@ -65,38 +89,28 @@ def draw_panel(self, context, layout):
 
     layout.operator("cgd.generate_game_rig", text="Generate Deform Rig")
 
-    row = layout.row(align=True)
-    row.alignment ="LEFT"
-
-    if addon_preferences.show_tool:
-
-        row.prop(addon_preferences, "show_tool", text="Semi Auto Toolkit", emboss=False, icon="TRIA_DOWN")
-
-        # if context.mode == "OBJECT":
-        #     layout.operator("cgd.constraint_to_armature_name", text="Constraint Armature by Bone Name")
-        # if context.mode == "POSE":
-        #     layout.operator("cgd.constraint_selected_bone_to_armature_name", text="Constraint Selected Bone to Armature By Name")
-        #
-        # layout.operator("cgd.remove_non_deform_bone", text="Remove Non Deform Bones")
-
-        layout.operator("gamerigtool.constraint_to_armature_name", text="Constraint to Armature Name")
-        layout.operator("gamerigtool.remove_non_deform_bone", text="Remove Non Deform Bone")
-
-        layout.separator()
-        col = layout.column(align=True)
-        col.operator("gamerigtool.clear_all_bones_constraints", text="Clear All Bones Constraints")
-        col.operator("gamerigtool.batch_rename_actions", text="Batch Rename Actions")
-        col.operator("gamerigtool.remove_animation_data", text="Remove Animation Data and Drivers")
-        col.operator("gamerigtool.remove_bbone", text="Remove BBone")
-        col.operator("gamerigtool.remove_bone_shape", text="Remove Bone Shapes")
-        col.operator("gamerigtool.remove_custom_property", text="Remove Custom Properties")
-        col.operator("gamerigtool.move_all_bones_to_layer", text="Move All Bones to Layer")
-        col.operator("gamerigtool.unlock_bones_transform", text="Unlock Bones Transform")
 
 
+    if Utility.draw_subpanel(addon_preferences, addon_preferences.show_utility, "show_utility", "Utility Tool", layout):
 
-    else:
-        row.prop(addon_preferences, "show_tool", text="Semi Auto Toolkit", emboss=False, icon="TRIA_RIGHT")
+        layout.operator("gamerigtool.constraint_to_armature_name", text="Constraint to Armature Name", icon="CONSTRAINT_BONE")
+        layout.operator("gamerigtool.batch_rename_actions", text="Batch Rename Actions", icon="SORTALPHA")
+        layout.operator("gamerigtool.flatten_hierarchy", text="Flatten Hierarchy", icon="NOCURVE")
+        layout.operator("gamerigtool.disconnect_all_bones", text="Disconnect All Bones", icon="GROUP_BONE")
+
+
+    if Utility.draw_subpanel(addon_preferences, addon_preferences.show_cleanup, "show_cleanup", "Clean Up Tool", layout):
+
+        layout.operator("gamerigtool.unlock_bones_transform", text="Unlock Bones Transform", icon="UNLOCKED")
+        layout.operator("gamerigtool.clear_all_bones_constraints", text="Clear All Bones Constraints", icon="CONSTRAINT")
+
+        layout.operator("gamerigtool.remove_non_deform_bone", text="Remove Non Deform Bone", icon="BONE_DATA")
+        layout.operator("gamerigtool.remove_animation_data", text="Remove Animation Data", icon="ACTION")
+        layout.operator("gamerigtool.remove_bbone", text="Remove BBone", icon="BONE_DATA")
+        layout.operator("gamerigtool.remove_bone_shape", text="Remove Bone Shapes", icon="CUBE")
+        layout.operator("gamerigtool.remove_custom_property", text="Remove Custom Properties", icon="PROPERTIES")
+
+        layout.operator("gamerigtool.move_all_bones_to_layer", text="Move All Bones to Layer", icon="SEQ_STRIP_DUPLICATE")
 
     draw_action_bakery(self, context, layout)
 
@@ -153,7 +167,7 @@ class CGD_PT_Deform_Rig_Side_Panel(bpy.types.Panel):
     def draw(self, context):
         layout = self.layout
         draw_panel(self, context, layout)
-
+        draw_armature_visibility_options(self, context, layout)
 
 
 classes = [CGD_PT_Deform_Rig_DATA_Panel, CGD_PT_Deform_Rig_Side_Panel]

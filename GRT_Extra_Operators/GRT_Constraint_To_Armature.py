@@ -7,12 +7,17 @@ class GRT_Constraint_To_Armature(bpy.types.Operator):
     bl_idname = "gamerigtool.constraint_to_armature_name"
     bl_label = "Constraint to Armature (Name Based)"
     bl_options = {'REGISTER', 'UNDO'}
-    
+
     Source_Armature: bpy.props.StringProperty()
     Target_Armature: bpy.props.StringProperty()
 
     Constraint_Type: bpy.props.EnumProperty(items=constraint_type)
     Clear_Constraint: bpy.props.BoolProperty(default=False)
+
+    @classmethod
+    def poll(cls, context):
+        return context.mode in ["OBJECT", "POSE"]
+
 
     def invoke(self, context, event):
 
@@ -40,45 +45,71 @@ class GRT_Constraint_To_Armature(bpy.types.Operator):
         layout.prop(self, "Constraint_Type", text="Constraint Type")
         layout.prop(self, "Clear_Constraint", text="Clear Constraint")
 
-
-
     def execute(self, context):
 
-
-        control_rig = bpy.data.objects.get(self.Source_Armature)
-        deform_rig = bpy.data.objects.get(self.Target_Armature)
-
-
+        Target_Armature = bpy.data.objects.get(self.Target_Armature)
+        Source_Armature = bpy.data.objects.get(self.Source_Armature)
 
 
         Editing_Armature = []
 
+
+        if context.mode == "OBJECT":
+            if Target_Armature and Source_Armature:
+                if Target_Armature.type == "ARMATURE" and Source_Armature.type == "ARMATURE":
+
+                    for bone in Source_Armature.pose.bones:
+
+                        if context.mode == "OBJECT":
+
+                            if self.Constraint_Type == "TRANSFORM":
+                                constraint = bone.constraints.new("COPY_TRANSFORMS")
+                                constraint.target = Target_Armature
+                                constraint.subtarget = Target_Armature.data.bones.get(bone.name).name
+
+                            if self.Constraint_Type == "LOTROT":
+                                constraint = bone.constraints.new("COPY_LOCATION")
+                                constraint.target = Target_Armature
+                                constraint.subtarget = Target_Armature.data.bones.get(bone.name).name
+
+                                constraint = bone.constraints.new("COPY_ROTATION")
+                                constraint.target = Target_Armature
+                                constraint.subtarget = Target_Armature.data.bones.get(bone.name).name
+
+
         if context.mode == "POSE":
+
             for object in context.selected_objects:
                 if object.type == "ARMATURE":
                     Editing_Armature.append(object)
 
+            for Source_Armature in Editing_Armature:
+
+                if Target_Armature and Source_Armature:
+
+                    if not Target_Armature == Source_Armature:
+
+                        if Target_Armature.type == "ARMATURE" and Source_Armature.type == "ARMATURE":
+
+                            for bone in Source_Armature.pose.bones:
+
+                                if bone.bone.select:
+
+                                    if self.Constraint_Type == "TRANSFORM":
+                                        constraint = bone.constraints.new("COPY_TRANSFORMS")
+                                        constraint.target = Target_Armature
+                                        constraint.subtarget = Target_Armature.data.bones.get(bone.name).name
+
+                                    if self.Constraint_Type == "LOTROT":
+                                        constraint = bone.constraints.new("COPY_LOCATION")
+                                        constraint.target = Target_Armature
+                                        constraint.subtarget = Target_Armature.data.bones.get(bone.name).name
+
+                                        constraint = bone.constraints.new("COPY_ROTATION")
+                                        constraint.target = Target_Armature
+                                        constraint.subtarget = Target_Armature.data.bones.get(bone.name).name
 
 
-
-        if control_rig and deform_rig:
-            if control_rig.type == "ARMATURE" and deform_rig.type == "ARMATURE":
-
-                for bone in deform_rig.pose.bones:
-
-                    if self.Constraint_Type == "TRANSFORM":
-                        constraint = bone.constraints.new("COPY_TRANSFORMS")
-                        constraint.target = control_rig
-                        constraint.subtarget = control_rig.data.bones.get(bone.name).name
-
-                    if self.Constraint_Type == "LOTROT":
-                        constraint = bone.constraints.new("COPY_LOCATION")
-                        constraint.target = control_rig
-                        constraint.subtarget = control_rig.data.bones.get(bone.name).name
-
-                        constraint = bone.constraints.new("COPY_ROTATION")
-                        constraint.target = control_rig
-                        constraint.subtarget = control_rig.data.bones.get(bone.name).name
 
 
 
