@@ -462,6 +462,19 @@ class GRT_Bake_Action_Bakery(bpy.types.Operator):
 
         NLA_Strip_Check = []
 
+        CTRL_Save_Use_NLA = None
+        DEF_Save_Use_NLA = None
+
+        if control_rig.animation_data:
+
+            CTRL_Save_Use_NLA = control_rig.animation_data.use_nla
+            control_rig.animation_data.use_nla = False
+
+        if deform_rig.animation_data:
+
+            DEF_Save_Use_NLA = deform_rig.animation_data.use_nla
+            deform_rig.animation_data.use_nla = False
+
         if control_rig and deform_rig:
 
 
@@ -470,22 +483,17 @@ class GRT_Bake_Action_Bakery(bpy.types.Operator):
 
                 Control_Rig_Action_Save = None
 
-                if control_rig.animation_data:
-                    Control_Rig_Action_Save = control_rig.animation_data.action
-
-
-
                 for Baker in Action_Bakery:
 
 
 
                     if control_rig.animation_data:
 
-                        CTRL_Save_Use_NLA = control_rig.animation_data.use_nla
-                        DEF_Save_Use_NLA = deform_rig.animation_data.use_nla
+                        # CTRL_Save_Use_NLA = control_rig.animation_data.use_nla
+                        # DEF_Save_Use_NLA = deform_rig.animation_data.use_nla
 
-                        control_rig.animation_data.use_nla = False
-                        deform_rig.animation_data.use_nla = False
+                        # control_rig.animation_data.use_nla = False
+                        # deform_rig.animation_data.use_nla = False
 
                         # for nla_track in control_rig.animation_data.nla_tracks:
                         #     nla_track.is_solo = False
@@ -585,8 +593,8 @@ class GRT_Bake_Action_Bakery(bpy.types.Operator):
                             if deform_rig.animation_data.action:
                                 deform_rig.animation_data.action = None
 
-                        control_rig.animation_data.use_nla = CTRL_Save_Use_NLA
-                        deform_rig.animation_data.use_nla = DEF_Save_Use_NLA
+                        # control_rig.animation_data.use_nla = CTRL_Save_Use_NLA
+                        # deform_rig.animation_data.use_nla = DEF_Save_Use_NLA
 
 
                         bpy.ops.object.mode_set(mode = 'OBJECT')
@@ -595,9 +603,16 @@ class GRT_Bake_Action_Bakery(bpy.types.Operator):
                         context.view_layer.objects.active = deform_rig
 
 
-                if control_rig.animation_data:
 
-                    control_rig.animation_data.action = Control_Rig_Action_Save
+        if control_rig.animation_data:
+
+            if CTRL_Save_Use_NLA is not None:
+                control_rig.animation_data.use_nla = CTRL_Save_Use_NLA
+
+        if deform_rig.animation_data:
+
+            if DEF_Save_Use_NLA is not None:
+                deform_rig.animation_data.use_nla = DEF_Save_Use_NLA
 
 
 
