@@ -265,8 +265,10 @@ class GRT_PT_Action_Bakery(bpy.types.Panel):
                 row.prop(Global_Settings, "Bake_Popup", text="", icon="SETTINGS")
 
                 layout.prop(Global_Settings, "Overwrite", text="Overwrite")
-                if Global_Settings.Overwrite:
-                    layout.prop(Global_Settings, "Clean_Empty_NLA_Strip", text="Clean Empty NLA Strip")
+                # if Global_Settings.Overwrite:
+                #     layout.prop(Global_Settings, "Clean_Empty_NLA_Strip", text="Clean Empty NLA Strip")
+
+                layout.prop(Global_Settings, "Push_to_NLA", text="Push To NLA")
 
                 layout.separator()
 
@@ -314,7 +316,7 @@ def draw_global_bake_settings(layout, context):
     layout.separator()
 
     layout.label(text="Settings")
-    layout.prop(Global_Settings, "Push_to_NLA", text="Push To NLA")
+
     layout.prop(Global_Settings, "Pre_Unmute_Constraint", text="Unmute Constraint Before Bake")
     layout.prop(Global_Settings, "Post_Mute_Constraint", text="Mute Constraint After Bake")
 
@@ -457,6 +459,9 @@ class GRT_Bake_Action_Bakery(bpy.types.Operator):
         control_rig = Global_Settings.Source_Armature
         deform_rig = Global_Settings.Target_Armature
 
+
+        NLA_Strip_Check = []
+
         if control_rig and deform_rig:
 
 
@@ -472,14 +477,22 @@ class GRT_Bake_Action_Bakery(bpy.types.Operator):
 
                 for Baker in Action_Bakery:
 
+
+
                     if control_rig.animation_data:
 
-                        for nla_track in control_rig.animation_data.nla_tracks:
-                            nla_track.is_solo = False
+                        CTRL_Save_Use_NLA = control_rig.animation_data.use_nla
+                        DEF_Save_Use_NLA = deform_rig.animation_data.use_nla
 
-                        if deform_rig.animation_data:
-                            for nla_track in deform_rig.animation_data.nla_tracks:
-                                nla_track.is_solo = False
+                        control_rig.animation_data.use_nla = False
+                        deform_rig.animation_data.use_nla = False
+
+                        # for nla_track in control_rig.animation_data.nla_tracks:
+                        #     nla_track.is_solo = False
+                        #
+                        # if deform_rig.animation_data:
+                        #     for nla_track in deform_rig.animation_data.nla_tracks:
+                        #         nla_track.is_solo = False
 
                         if Global_Settings.Pre_Unmute_Constraint:
                             Pose_Bone = deform_rig.pose.bones
@@ -493,22 +506,20 @@ class GRT_Bake_Action_Bakery(bpy.types.Operator):
 
                                 action = Baker.Action
 
-                                for nla_track in control_rig.animation_data.nla_tracks:
-                                    nla_track.mute = True
+                                # for nla_track in control_rig.animation_data.nla_tracks:
+                                #     nla_track.mute = True
 
                                 control_rig.animation_data.action = action
 
 
 
-                                frame = [i for i in range(int(action.frame_range[0]), int(action.frame_range[1])+1-Global_Settings.GLOBAL_Trim_End_Frame)]
-                                obj_act = [[deform_rig, None]]
-                                Baked_Action = anim_utils.bake_action_objects(obj_act, frames=frame, only_selected=Global_Settings.BAKE_SETTINGS_Only_Selected, do_pose=Global_Settings.BAKE_SETTINGS_Do_Pose, do_object=Global_Settings.BAKE_SETTINGS_Do_Object, do_visual_keying=Global_Settings.BAKE_SETTINGS_Do_Visual_Keying, do_constraint_clear=Global_Settings.BAKE_SETTINGS_Do_Constraint_Clear, do_parents_clear=Global_Settings.BAKE_SETTINGS_Do_Parent_Clear, do_clean=Global_Settings.BAKE_SETTINGS_Do_Clean)
+
 
                                 if Baker.use_Local_Name:
                                     if Baker.LOCAL_Baked_Name:
                                         action_name = Baker.LOCAL_Baked_Name
                                     else:
-                                        action_name = action.name
+                                        action_name = "Baked_" + action.name
 
                                 else:
 
@@ -520,19 +531,35 @@ class GRT_Bake_Action_Bakery(bpy.types.Operator):
                                         action_name =  action.name + Global_Settings.GLOBAL_Baked_Name_01
 
 
-                                if Global_Settings.Overwrite:
-                                    duplicate_check = bpy.data.actions.get(action_name)
-                                    if duplicate_check:
-                                        bpy.data.actions.remove(duplicate_check)
-                                        context.view_layer.update()
 
-                                        if Global_Settings.Clean_Empty_NLA_Strip:
-                                            for nla_track in deform_rig.animation_data.nla_tracks:
-                                                for s in nla_track.strips:
-                                                    for strip in nla_track.strips:
-                                                        if strip.action == None:
-                                                            nla_track.strips.remove(strip)
-                                                            break
+                                frame = [i for i in range(int(action.frame_range[0]), int(action.frame_range[1])+1-Global_Settings.GLOBAL_Trim_End_Frame)]
+
+                                if Global_Settings.Overwrite:
+                                    obj_act = [[deform_rig, bpy.data.actions.get(action_name)]]
+                                else:
+                                    obj_act = [[deform_rig, None]]
+
+                                # obj_act = [[deform_rig, None]]
+                                Baked_Action = anim_utils.bake_action_objects(obj_act, frames=frame, only_selected=Global_Settings.BAKE_SETTINGS_Only_Selected, do_pose=Global_Settings.BAKE_SETTINGS_Do_Pose, do_object=Global_Settings.BAKE_SETTINGS_Do_Object, do_visual_keying=Global_Settings.BAKE_SETTINGS_Do_Visual_Keying, do_constraint_clear=Global_Settings.BAKE_SETTINGS_Do_Constraint_Clear, do_parents_clear=Global_Settings.BAKE_SETTINGS_Do_Parent_Clear, do_clean=Global_Settings.BAKE_SETTINGS_Do_Clean)
+
+
+
+                                # if Global_Settings.Overwrite:
+                                #     duplicate_check = bpy.data.actions.get(action_name)
+                                #     if duplicate_check:
+                                #
+                                #
+                                #         context.view_layer.update()
+                                #         bpy.data.actions.remove(duplicate_check)
+                                #         context.view_layer.update()
+                                #
+                                #         if Global_Settings.Clean_Empty_NLA_Strip:
+                                #             for nla_track in deform_rig.animation_data.nla_tracks:
+                                #                 for s in nla_track.strips:
+                                #                     for strip in nla_track.strips:
+                                #                         if strip.action == None:
+                                #                             nla_track.strips.remove(strip)
+                                #                             break
 
                                 Baked_Action[0].name = action_name
 
@@ -558,8 +585,8 @@ class GRT_Bake_Action_Bakery(bpy.types.Operator):
                             if deform_rig.animation_data.action:
                                 deform_rig.animation_data.action = None
 
-
-
+                        control_rig.animation_data.use_nla = CTRL_Save_Use_NLA
+                        deform_rig.animation_data.use_nla = DEF_Save_Use_NLA
 
 
                         bpy.ops.object.mode_set(mode = 'OBJECT')
