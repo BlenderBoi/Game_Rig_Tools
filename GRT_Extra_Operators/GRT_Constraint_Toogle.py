@@ -8,13 +8,13 @@ class GRT_Constraint_Toogle(bpy.types.Operator):
     bl_idname = "gamerigtool.toogle_constraint"
     bl_label = "Toogle Constraints"
     bl_options = {'REGISTER', 'UNDO'}
-    
+
     mute : bpy.props.BoolProperty()
     use_selected: bpy.props.BoolProperty()
 
     @classmethod
     def poll(cls, context):
-        if context.mode == "POSE":
+        if context.mode in ["OBJECT", "POSE"]:
             return True
         else:
             return False
@@ -24,20 +24,21 @@ class GRT_Constraint_Toogle(bpy.types.Operator):
 
         for object in context.selected_objects:
 
-            # object = context.object
-            Pose_Bone = object.pose.bones
+            if object.type == "ARMATURE":
+                # object = context.object
+                Pose_Bone = object.pose.bones
 
-            for bone in Pose_Bone:
-                if self.use_selected:
+                for bone in Pose_Bone:
+                    if self.use_selected:
 
-                    if bone.bone.select:
+                        if bone.bone.select:
+                            for constraint in bone.constraints:
+                                constraint.mute = self.mute
+
+                    else:
+
                         for constraint in bone.constraints:
                             constraint.mute = self.mute
-
-                else:
-
-                    for constraint in bone.constraints:
-                        constraint.mute = self.mute
 
 
         return {'FINISHED'}

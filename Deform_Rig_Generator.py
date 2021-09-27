@@ -9,7 +9,7 @@ addon_name = os.path.basename(addon_directory)
 
 
 constraint_type = [("TRANSFORM","Copy Transform","Copy Transform"),("LOTROT","Copy Location & Copy Rotation","Lot Rot")]
-ENUM_Extract_Mode = [("SELECTED","Selected","Selected"),("DEFORM","Deform","Deform"), ("SELECTED_DEFORM", "Selected Deform", "Selected Deform")]
+ENUM_Extract_Mode = [("SELECTED","Selected","Selected"),("DEFORM","Deform","Deform"), ("SELECTED_DEFORM", "Selected Deform", "Selected Deform"), ("DEFORM_AND_SELECTED", "Deform and Selected", "Deform and Selected")]
 
 class GRT_Generate_Game_Rig(bpy.types.Operator):
     """This will Generate a Deform Game Rig based on the step in CGDive Video"""
@@ -48,7 +48,6 @@ class GRT_Generate_Game_Rig(bpy.types.Operator):
     Remove_Animation_Data: bpy.props.BoolProperty(default=True)
 
     Show_Advanced: bpy.props.BoolProperty(default=False)
-    Show_Option: bpy.props.BoolProperty(default=False)
 
 #    RIGIFY_Disable_Stretch: bpy.props.BoolProperty(default=True)
 
@@ -73,18 +72,23 @@ class GRT_Generate_Game_Rig(bpy.types.Operator):
         layout.prop(self, "Flat_Hierarchy", text="Flat Hierarchy")
         layout.prop(self, "Disconnect_Bone", text="Disconnect Bone")
 
-        if Utility.draw_subpanel(self, self.Show_Option, "Show_Option", "Option", layout):
 
-            layout.label(text="Constraint Type:")
+        layout.label(text="Constraint Type:")
 
-            layout.prop(self, "Constraint_Type", text="")
+        layout.prop(self, "Constraint_Type", text="")
 
-            layout.label(text="Extract Mode:")
-            layout.prop(self, "Extract_Mode", text="")
+        layout.label(text="Extract Mode:")
+        layout.prop(self, "Extract_Mode", text="")
 
-            layout.prop(self, "Deform_Bind_to_Deform_Rig", text="Bind to Deform Rig")
-            if self.Deform_Bind_to_Deform_Rig:
-                layout.prop(self, "Parent_To_Deform_Rig", text="Parent Mesh Object to Deform Rig")
+        layout.separator()
+
+        layout.prop(self, "Deform_Bind_to_Deform_Rig", text="Bind to Deform Rig")
+        if self.Deform_Bind_to_Deform_Rig:
+            layout.prop(self, "Parent_To_Deform_Rig", text="Parent Mesh Object to Deform Rig")
+
+
+
+
 
 
         if Utility.draw_subpanel(self, self.Show_Advanced, "Show_Advanced", "Advanced", layout):
@@ -213,6 +217,11 @@ class GRT_Generate_Game_Rig(bpy.types.Operator):
                             if not bone.select:
                                 if not bone.use_deform:
                                     Edit_Bones.remove(bone)
+
+                        if self.Extract_Mode == "DEFORM_AND_SELECTED":
+                            if not bone.use_deform and not bone.select:
+                                Edit_Bones.remove(bone)
+
 
                 bpy.ops.object.mode_set(mode = 'POSE')
                 game_rig.data.bones.update()

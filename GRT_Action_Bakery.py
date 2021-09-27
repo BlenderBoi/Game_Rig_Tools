@@ -9,6 +9,22 @@ addon_directory = os.path.dirname(script_file)
 addon_name = os.path.basename(addon_directory)
 
 
+class GRT_Load_Action_Menu(bpy.types.Menu):
+    bl_label = "Load Action Menu"
+    bl_idname = "GRT_MT_load_action_menu"
+
+    def draw(self, context):
+        layout = self.layout
+
+        Operator = layout.operator("gamerigtool.action_bakery_list_operator", text="Load Action By Name", icon="SORTALPHA")
+        Operator.operation = "LOAD_ACTION_BY_NAME"
+
+        Operator = layout.operator("gamerigtool.action_bakery_list_operator", text="Load All Action", icon="IMPORT")
+        Operator.operation = "LOAD_ALL_ACTIONS"
+
+        Operator = layout.operator("gamerigtool.batch_rename_actions", text="Batch Rename Actions", icon="SORTALPHA")
+
+
 
 ENUM_list_operation = [("ADD","Add","Add"),("REMOVE","Remove","Remove"),("UP","Up","Up"), ("DOWN","Down","Down"),("ASSIGN","Assign","Assign"),("UNASSIGN","Unassign","Unassign"), ("LOAD_ALL_ACTIONS", "Load All Actions", "Load All Actions"), ("LOAD_ACTIVE_ACTIONS", "Load Active Actions", "Load Active Actions"), ("LOAD_ACTION_BY_NAME", "Load Action By Name", "Load Action By Name")]
 
@@ -67,6 +83,7 @@ class GRT_Action_Bakery_List_Operator(bpy.types.Operator):
                     if self.name_include in action.name:
                         item = item_list.add()
                         item.Action = action
+                        item.LOCAL_Baked_Name = "BAKED_" + action.name
 
                         scn.GRT_Action_Bakery_Index = len(item_list) - 1
 
@@ -95,6 +112,7 @@ class GRT_Action_Bakery_List_Operator(bpy.types.Operator):
                         if not action in check:
                             item = item_list.add()
                             item.Action = action
+                            item.LOCAL_Baked_Name = "BAKED_" + action.name
 
                             scn.GRT_Action_Bakery_Index = len(item_list) - 1
 
@@ -112,6 +130,7 @@ class GRT_Action_Bakery_List_Operator(bpy.types.Operator):
                 if not action in check:
                     item = item_list.add()
                     item.Action = action
+                    item.LOCAL_Baked_Name = "BAKED_" + action.name
 
                     scn.GRT_Action_Bakery_Index = len(item_list) - 1
 
@@ -135,7 +154,10 @@ class GRT_Action_Bakery_List_Operator(bpy.types.Operator):
 
             if Action:
                 item = item_list.add()
-                item.Action = bpy.data.actions.get(self.action)
+                item.Action = Action
+
+                item.LOCAL_Baked_Name = "BAKED_" + Action.name
+
 
                 scn.GRT_Action_Bakery_Index = len(item_list) - 1
 
@@ -220,6 +242,10 @@ class GRT_PT_Action_Bakery(bpy.types.Panel):
         Operator.operation = "REMOVE"
         Operator.index = scn.GRT_Action_Bakery_Index
 
+        col.separator()
+        col.menu("GRT_MT_load_action_menu", text="", icon="DOWNARROW_HLT")
+        col.separator()
+
         Operator = col.operator("gamerigtool.action_bakery_list_operator", text="", icon="TRIA_UP")
         Operator.operation = "UP"
         Operator.index = scn.GRT_Action_Bakery_Index
@@ -228,16 +254,16 @@ class GRT_PT_Action_Bakery(bpy.types.Panel):
         Operator.operation = "DOWN"
         Operator.index = scn.GRT_Action_Bakery_Index
 
-        col.separator()
-
-        Operator = col.operator("gamerigtool.action_bakery_list_operator", text="", icon="SORTALPHA")
-        Operator.operation = "LOAD_ACTION_BY_NAME"
 
 
-
+        # Operator = col.operator("gamerigtool.action_bakery_list_operator", text="", icon="SORTALPHA")
+        # Operator.operation = "LOAD_ACTION_BY_NAME"
+        #
+        #
+        #
         row2 = col2.row(align=True)
-        Operator = row2.operator("gamerigtool.action_bakery_list_operator", text="All Action", icon="IMPORT")
-        Operator.operation = "LOAD_ALL_ACTIONS"
+        # Operator = row2.operator("gamerigtool.action_bakery_list_operator", text="All Action", icon="IMPORT")
+        # Operator.operation = "LOAD_ALL_ACTIONS"
 
         object = context.object
         if object:
@@ -268,7 +294,7 @@ class GRT_PT_Action_Bakery(bpy.types.Panel):
                 # col.prop(Global_Settings, "Target_Armature", text="")
                 # col.prop(Global_Settings, "Bake_Popup", text="Use Operator Popup")
 
-                layout.prop(active_baker, "use_Local_Name", text="Use Local Name")
+                layout.prop(active_baker, "use_Local_Name", text="Set Baked Action name")
 
                 if active_baker.use_Local_Name:
                     layout.prop(active_baker, "LOCAL_Baked_Name", text="")
@@ -392,7 +418,8 @@ class GRT_Action_Bakery_Property_Group(bpy.types.PropertyGroup):
     use_Local_Name: bpy.props.BoolProperty()
     LOCAL_Baked_Name: bpy.props.StringProperty()
 
-
+    use_Local_Trim: bpy.props.BoolProperty()
+    LOCAL_Trim: bpy.props.IntProperty()
 
 
 
@@ -680,7 +707,7 @@ class GRT_Bake_Action_Bakery(bpy.types.Operator):
 
 
 
-classes = [GRT_Bake_Action_Bakery, GRT_Action_Bakery_List_Operator, GRT_UL_Action_Bakery_List, GRT_Action_Bakery_Property_Group, GRT_Action_Bakery_Global_Settings_Property_Group, GRT_PT_Action_Bakery]
+classes = [GRT_Load_Action_Menu, GRT_Bake_Action_Bakery, GRT_Action_Bakery_List_Operator, GRT_UL_Action_Bakery_List, GRT_Action_Bakery_Property_Group, GRT_Action_Bakery_Global_Settings_Property_Group, GRT_PT_Action_Bakery]
 
 
 def register():
