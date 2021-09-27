@@ -216,17 +216,17 @@ class GRT_PT_Action_Bakery(bpy.types.Panel):
     bl_region_type = 'UI'
     bl_category = "Game Rig Tools"
 
-    @classmethod
-    def poll(cls, context):
+    # @classmethod
+    # def poll(cls, context):
 
         #Top Bar Toogle Constraint Update
 
-        addon_preferences = context.preferences.addons[addon_name].preferences
-
-        if addon_preferences.side_panel:
-            return True
-        else:
-            return False
+        # addon_preferences = context.preferences.addons[addon_name].preferences
+        #
+        # if addon_preferences.side_panel:
+        #     return True
+        # else:
+        #     return False
 
     def draw(self, context):
         layout = self.layout

@@ -124,32 +124,6 @@ def draw_panel(self, context, layout):
     # draw_action_bakery(self, context, layout)
 
 
-class CGD_PT_Deform_Rig_DATA_Panel(bpy.types.Panel):
-
-    bl_label = "Game Rig Tools"
-    bl_space_type = 'PROPERTIES'
-    bl_region_type = 'WINDOW'
-    bl_context = "data"
-
-    @classmethod
-    def poll(cls, context):
-
-        addon_preferences = context.preferences.addons[addon_name].preferences
-
-        # if context.object:
-        #     if context.object.type == "ARMATURE":
-
-
-        if addon_preferences.armature_data:
-            return True
-        else:
-            return False
-
-    def draw(self, context):
-        layout = self.layout
-
-        draw_panel(self, context, layout)
-
 class CGD_PT_Deform_Rig_Side_Panel(bpy.types.Panel):
 
     bl_label = "Game Rig Tools"
@@ -157,19 +131,19 @@ class CGD_PT_Deform_Rig_Side_Panel(bpy.types.Panel):
     bl_region_type = 'UI'
     bl_category = "Game Rig Tools"
 
-    @classmethod
-    def poll(cls, context):
-
-        addon_preferences = context.preferences.addons[addon_name].preferences
+    # @classmethod
+    # def poll(cls, context):
+    #
+    #     addon_preferences = context.preferences.addons[addon_name].preferences
         #
         # if context.object:
         #     if context.object.type == "ARMATURE":
 
 
-        if addon_preferences.side_panel:
-            return True
-        else:
-            return False
+        # if addon_preferences.side_panel:
+        #     return True
+        # else:
+        #     return False
 
 
 
@@ -179,7 +153,7 @@ class CGD_PT_Deform_Rig_Side_Panel(bpy.types.Panel):
         draw_armature_visibility_options(self, context, layout)
 
 
-classes = [CGD_PT_Deform_Rig_DATA_Panel, CGD_PT_Deform_Rig_Side_Panel]
+classes = [CGD_PT_Deform_Rig_Side_Panel]
 
 
 def register():
