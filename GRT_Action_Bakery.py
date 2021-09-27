@@ -197,9 +197,15 @@ class GRT_UL_Action_Bakery_List(bpy.types.UIList):
         else:
             row.label(text="Missing Action", icon="ERROR")
 
+
+        row = row.row(align=True)
+        row.alignment = "RIGHT"
+        row.prop(item, "use_loop", text="", icon="FILE_REFRESH")
+
         Operator = row.operator("gamerigtool.action_bakery_list_operator", text="", icon="X")
         Operator.operation = "REMOVE"
         Operator.index = index
+
 
             # row.prop(Action, "name", text="")
 
@@ -276,8 +282,14 @@ class GRT_PT_Action_Bakery(bpy.types.Panel):
 
         Global_Settings = scn.GRT_Action_Bakery_Global_Settings
 
+
+
+
+
         if len(scn.GRT_Action_Bakery) > 0:
             if scn.GRT_Action_Bakery_Index < len(scn.GRT_Action_Bakery):
+
+
 
                 active_baker = context.scene.GRT_Action_Bakery[scn.GRT_Action_Bakery_Index]
 
@@ -294,44 +306,72 @@ class GRT_PT_Action_Bakery(bpy.types.Panel):
                 # col.prop(Global_Settings, "Target_Armature", text="")
                 # col.prop(Global_Settings, "Bake_Popup", text="Use Operator Popup")
 
-                layout.prop(active_baker, "use_Local_Name", text="Set Baked Action name")
+                # if Utility.draw_subpanel(active_baker, active_baker.SHOW_Local_Settings, "SHOW_Local_Settings", "Local Settings", layout):
+
+                layout.label(text="Local Settings")
+
+                col3 = layout.column(align=True)
+                col3.prop(active_baker, "use_Local_Name", text="Set Baked Action name")
 
                 if active_baker.use_Local_Name:
-                    layout.prop(active_baker, "LOCAL_Baked_Name", text="")
+                    col3.prop(active_baker, "LOCAL_Baked_Name", text="")
+
+                row3 = col3.row(align=True)
+                row3.prop(active_baker, "use_loop", text="Loop", icon="FILE_REFRESH")
+
+
+                if not active_baker.use_loop:
+
+
+                    row3.prop(active_baker, "use_Local_Trim", text="Trim", icon="SCULPTMODE_HLT")
+
+                    if active_baker.use_Local_Trim:
+
+                        col3.prop(active_baker, "LOCAL_Trim", text="Trim")
+
+
+
 
                 layout.separator()
 
 
 
-                col = layout.column(align=True)
-                col.label(text="Control Rig")
-                col.prop(Global_Settings, "Source_Armature", text="")
-                col.label(text="Game Rig")
-                col.prop(Global_Settings, "Target_Armature", text="")
-
-                layout.separator()
-
-
-                if not Global_Settings.Source_Armature:
-                    layout.label(text="Select Control Rig", icon="INFO")
-                if not Global_Settings.Target_Armature:
-                    layout.label(text="Select Game Rig", icon="INFO")
 
 
 
-                row = layout.row(align=True)
-                row.operator("gamerigtool.bake_action_bakery")
-                row.prop(Global_Settings, "Bake_Popup", text="", icon="SETTINGS")
+        layout.label(text="Bake Settings")
 
-                layout.prop(Global_Settings, "Overwrite", text="Overwrite")
-                # if Global_Settings.Overwrite:
-                #     layout.prop(Global_Settings, "Clean_Empty_NLA_Strip", text="Clean Empty NLA Strip")
 
-                layout.prop(Global_Settings, "Push_to_NLA", text="Push To NLA")
+        col = layout.column(align=True)
+        col.label(text="Control Rig")
+        col.prop(Global_Settings, "Source_Armature", text="")
+        col.label(text="Game Rig")
+        col.prop(Global_Settings, "Target_Armature", text="")
 
-                layout.separator()
+        layout.separator()
 
-                # if Utility.draw_subpanel(active_baker, active_baker.SHOW_Local_Settings, "SHOW_Local_Settings", "Local Bake Settings", layout):
+
+        if not Global_Settings.Source_Armature:
+            layout.label(text="Select Control Rig", icon="INFO")
+        if not Global_Settings.Target_Armature:
+            layout.label(text="Select Game Rig", icon="INFO")
+
+
+
+        row = layout.row(align=True)
+        row.operator("gamerigtool.bake_action_bakery")
+        row.prop(Global_Settings, "Bake_Popup", text="", icon="SETTINGS")
+
+        layout.prop(Global_Settings, "Overwrite", text="Overwrite")
+
+        layout.prop(Global_Settings, "Push_to_NLA", text="Push To NLA")
+
+        layout.separator()
+
+
+
+
+
 
 
         if Utility.draw_subpanel(Global_Settings, Global_Settings.SHOW_Bake_Settings, "SHOW_Bake_Settings", "Global Bake Settings", layout):
@@ -366,11 +406,11 @@ def draw_global_bake_settings(layout, context):
         col.prop(Global_Settings, "GLOBAL_Baked_Name_01", text="From")
         col.prop(Global_Settings, "GLOBAL_Baked_Name_02", text="To")
 
-    layout.separator()
-
-    layout.label(text="Trim End")
-    row = layout.row(align=True)
-    row.prop(Global_Settings, "GLOBAL_Trim_End_Frame", text="")
+    # layout.separator()
+    #
+    # layout.label(text="Trim End")
+    # row = layout.row(align=True)
+    # row.prop(Global_Settings, "GLOBAL_Trim_End_Frame", text="")
 
     layout.separator()
 
@@ -419,7 +459,8 @@ class GRT_Action_Bakery_Property_Group(bpy.types.PropertyGroup):
     LOCAL_Baked_Name: bpy.props.StringProperty()
 
     use_Local_Trim: bpy.props.BoolProperty()
-    LOCAL_Trim: bpy.props.IntProperty()
+    use_loop: bpy.props.BoolProperty()
+    LOCAL_Trim: bpy.props.IntProperty(min=0)
 
 
 
@@ -601,7 +642,18 @@ class GRT_Bake_Action_Bakery(bpy.types.Operator):
 
 
 
-                                frame = [i for i in range(int(action.frame_range[0]), int(action.frame_range[1])+1-Global_Settings.GLOBAL_Trim_End_Frame)]
+                                    # else:
+                                    #     frame = [i for i in range(int(action.frame_range[0]), int(action.frame_range[1])+1-Global_Settings.GLOBAL_Trim_End_Frame)]
+
+                                if Baker.use_loop:
+                                    frame = [i for i in range(int(action.frame_range[0]), int(action.frame_range[1]))]
+                                else:
+
+                                    if Baker.use_Local_Trim:
+                                        frame = [i for i in range(int(action.frame_range[0]), int(action.frame_range[1])+1-Baker.LOCAL_Trim)]
+                                    else:
+                                        frame = [i for i in range(int(action.frame_range[0]), int(action.frame_range[1])+1)]
+
 
                                 if Global_Settings.Overwrite:
                                     obj_act = [[deform_rig, bpy.data.actions.get(action_name)]]

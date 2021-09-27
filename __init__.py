@@ -17,12 +17,11 @@ from . import GRT_Extra_Operators
 from . import Deform_Rig_Generator
 from . import Deform_Rig_Panel
 from . import Preferences
-from . import Action_Bakery
 
 from . import GRT_Action_Bakery
 from . import addition
 
-modules = [addition, GRT_Extra_Operators, Deform_Rig_Generator, Deform_Rig_Panel, Preferences, Action_Bakery, GRT_Action_Bakery]
+modules = [addition, GRT_Extra_Operators, Deform_Rig_Generator, Deform_Rig_Panel, Preferences, GRT_Action_Bakery]
 
 def register():
 
