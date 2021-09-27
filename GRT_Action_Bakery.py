@@ -10,7 +10,7 @@ addon_name = os.path.basename(addon_directory)
 
 
 
-ENUM_list_operation = [("ADD","Add","Add"),("REMOVE","Remove","Remove"),("UP","Up","Up"), ("DOWN","Down","Down"),("ASSIGN","Assign","Assign"),("UNASSIGN","Unassign","Unassign"), ("LOAD_ALL_ACTIONS", "Load All Actions", "Load All Actions"), ("LOAD_ACTIVE_ACTIONS", "Load Active Actions", "Load Active Actions")]
+ENUM_list_operation = [("ADD","Add","Add"),("REMOVE","Remove","Remove"),("UP","Up","Up"), ("DOWN","Down","Down"),("ASSIGN","Assign","Assign"),("UNASSIGN","Unassign","Unassign"), ("LOAD_ALL_ACTIONS", "Load All Actions", "Load All Actions"), ("LOAD_ACTIVE_ACTIONS", "Load Active Actions", "Load Active Actions"), ("LOAD_ACTION_BY_NAME", "Load Action By Name", "Load Action By Name")]
 
 class GRT_Action_Bakery_List_Operator(bpy.types.Operator):
     """List Operator"""
@@ -23,15 +23,19 @@ class GRT_Action_Bakery_List_Operator(bpy.types.Operator):
     index: bpy.props.IntProperty()
 
     assign: bpy.props.BoolProperty(default=True)
-
+    name_include: bpy.props.StringProperty()
 
     def draw(self, context):
-        layout = self.layout
-        layout.prop_search(self, "action", bpy.data, "actions" ,text="Action")
+        if self.operation == "ADD":
+            layout = self.layout
+            layout.prop_search(self, "action", bpy.data, "actions" ,text="Action")
+        if self.operation == "LOAD_ACTION_BY_NAME":
+            layout = self.layout
+            layout.prop(self, "name_include", text="Name Include")
 
     def invoke(self, context, event):
 
-        if self.operation == "ADD":
+        if self.operation in ["ADD", "LOAD_ACTION_BY_NAME"]:
             return context.window_manager.invoke_props_dialog(self)
         else:
             return self.execute(context)
@@ -50,6 +54,28 @@ class GRT_Action_Bakery_List_Operator(bpy.types.Operator):
         #             if not item.Action:
         #                 item_list.remove(index)
         #                 break
+
+
+
+        if self.operation == "LOAD_ACTION_BY_NAME":
+
+            for action in bpy.data.actions:
+
+                check = [item.Action for item in item_list]
+
+                if not action in check:
+                    if self.name_include in action.name:
+                        item = item_list.add()
+                        item.Action = action
+
+                        scn.GRT_Action_Bakery_Index = len(item_list) - 1
+
+            Utility.update_UI()
+
+            return {'FINISHED'}
+
+
+
 
         if self.operation == "LOAD_ACTIVE_ACTIONS":
 
@@ -201,6 +227,13 @@ class GRT_PT_Action_Bakery(bpy.types.Panel):
         Operator = col.operator("gamerigtool.action_bakery_list_operator", text="", icon="TRIA_DOWN")
         Operator.operation = "DOWN"
         Operator.index = scn.GRT_Action_Bakery_Index
+
+        col.separator()
+
+        Operator = col.operator("gamerigtool.action_bakery_list_operator", text="", icon="SORTALPHA")
+        Operator.operation = "LOAD_ACTION_BY_NAME"
+
+
 
         row2 = col2.row(align=True)
         Operator = row2.operator("gamerigtool.action_bakery_list_operator", text="All Action", icon="IMPORT")
