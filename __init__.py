@@ -1,7 +1,7 @@
 
 bl_info = {
     "name": "Game Rig Tools",
-    "author": "BlenderBoi",
+    "author": "BlenderBoi, Xin",
     "version": (1, 6, 0),
     "blender": (2, 80, 0),
     "description": "Generate a Deform Rig base on CGDive's Game-Ready Rig Video",
@@ -20,8 +20,9 @@ from . import Preferences
 from . import Action_Bakery
 
 from . import GRT_Action_Bakery
+from . import addition
 
-modules = [GRT_Extra_Operators, Deform_Rig_Generator, Deform_Rig_Panel, Preferences, Action_Bakery, GRT_Action_Bakery]
+modules = [addition, GRT_Extra_Operators, Deform_Rig_Generator, Deform_Rig_Panel, Preferences, Action_Bakery, GRT_Action_Bakery]
 
 def register():
 

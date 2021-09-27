@@ -104,6 +104,8 @@ def draw_panel(self, context, layout):
         layout.operator("gamerigtool.batch_rename_actions", text="Batch Rename Actions", icon="SORTALPHA")
         layout.operator("gamerigtool.flatten_hierarchy", text="Flatten Hierarchy", icon="NOCURVE")
         layout.operator("gamerigtool.disconnect_all_bones", text="Disconnect All Bones", icon="GROUP_BONE")
+        layout.operator("gamerigtool.apply_scale_op", text="Apply Armature Scale")
+
 
 
     if Utility.draw_subpanel(addon_preferences, addon_preferences.show_cleanup, "show_cleanup", "Clean Up Tool", layout):

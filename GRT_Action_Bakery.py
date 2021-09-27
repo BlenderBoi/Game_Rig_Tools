@@ -353,6 +353,7 @@ class GRT_Action_Bakery_Property_Group(bpy.types.PropertyGroup):
     Action : bpy.props.PointerProperty(name="Action", type=bpy.types.Action)
     Bake_Select: bpy.props.BoolProperty(default=True)
 
+
     SHOW_Local_Settings: bpy.props.BoolProperty(default=False)
 
     use_Local_Name: bpy.props.BoolProperty()

@@ -1,6 +1,7 @@
 import bpy
 import os
 from . import Deform_Rig_Panel
+from . import Utility
 
 script_file = os.path.realpath(__file__)
 addon_directory = os.path.dirname(script_file)
@@ -43,6 +44,11 @@ class CGD_user_preferences(bpy.types.AddonPreferences):
 
     use_selected: bpy.props.BoolProperty(default=False)
 
+    show_credits: bpy.props.BoolProperty(default=False)
+
+    OPERATOR_APPLYMENU_Apply_Armature_Scale: bpy.props.BoolProperty(default=False)
+
+
     def draw(self, context):
         layout = self.layout
         layout.prop(self, "side_panel_name", text="Tab Catagory")
@@ -50,6 +56,18 @@ class CGD_user_preferences(bpy.types.AddonPreferences):
         layout.prop(self, "side_panel", text="Show in Side Panel")
         layout.prop(self, "armature_data", text="Show in Data Properties")
         layout.prop(self, "toogle_constraints", text="Top Bar Toogle Constraint")
+
+        layout.label(text="Operators Options")
+        layout.prop(self, "OPERATOR_APPLYMENU_Apply_Armature_Scale", text="Apply Menu: Apply Armature Scale")
+
+
+        if Utility.draw_subpanel(self, self.show_credits, "show_credits", "Credit", layout):
+            box = layout.box()
+            box.label(text="Author: Xin", icon="USER")
+
+            box.label(text="Contribution: Apply armature scale", icon="ADD")
+            box.label(text="Source: https://gitlab.com/x190/apply_armature_scale", icon="LINKED")
+
 
 classes = [CGD_user_preferences]
 
