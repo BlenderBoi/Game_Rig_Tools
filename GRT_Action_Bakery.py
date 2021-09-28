@@ -349,8 +349,8 @@ class GRT_PT_Action_Bakery(bpy.types.Panel):
 
         # Operator = row2.operator("gamerigtool.action_bakery_list_operator", text="All Action", icon="IMPORT")
         # Operator.operation = "LOAD_ALL_ACTIONS"
-        LOAD_ACTION_ENABLE =False
-
+        LOAD_ACTION_ENABLE = False
+        LOAD_NLA_ENABLE = False
         object = context.object
         if object:
             if object.type == "ARMATURE":
@@ -358,15 +358,23 @@ class GRT_PT_Action_Bakery(bpy.types.Panel):
                     if object.animation_data.action:
                         LOAD_ACTION_ENABLE = True
 
-
-
+        if object:
+            if object.type == "ARMATURE":
+                if object.animation_data:
+                    LOAD_NLA_ENABLE = True
 
         row2 = col2.row(align=True)
-        row2.enabled = LOAD_ACTION_ENABLE
-        Operator = row2.operator("gamerigtool.action_bakery_list_operator", text="Active", icon="IMPORT")
+
+        row3 = row2.row(align=True)
+        row3.enabled = True
+        row3.enabled = LOAD_ACTION_ENABLE
+        Operator = row3.operator("gamerigtool.action_bakery_list_operator", text="Active", icon="IMPORT")
         Operator.operation = "LOAD_ACTIVE_ACTIONS"
 
-        Operator = row2.operator("gamerigtool.action_bakery_list_operator", text="From NLA", icon="NLA_PUSHDOWN")
+        row3 = row2.row(align=True)
+        row3.enabled = LOAD_NLA_ENABLE
+
+        Operator = row3.operator("gamerigtool.action_bakery_list_operator", text="From NLA", icon="NLA_PUSHDOWN")
         Operator.operation = "LOAD_FROM_NLA"
 
         row2 = col2.row(align=True)
@@ -549,12 +557,12 @@ def draw_global_bake_settings(layout, context):
 
     layout.label(text="Bake Settings")
     layout.prop(Global_Settings, "BAKE_SETTINGS_Only_Selected", text="Only Selected")
-    layout.prop(Global_Settings, "BAKE_SETTINGS_Do_Pose", text="Do Pose")
-    layout.prop(Global_Settings, "BAKE_SETTINGS_Do_Object", text="Do Object")
-    layout.prop(Global_Settings, "BAKE_SETTINGS_Do_Visual_Keying", text="Do Visual Keying")
-    layout.prop(Global_Settings, "BAKE_SETTINGS_Do_Constraint_Clear", text="Do Constraint Clear")
-    layout.prop(Global_Settings, "BAKE_SETTINGS_Do_Parent_Clear", text="Do Parent Clear")
-    layout.prop(Global_Settings, "BAKE_SETTINGS_Do_Clean", text="Do Clean")
+    layout.prop(Global_Settings, "BAKE_SETTINGS_Do_Visual_Keying", text="Visual Keying")
+    layout.prop(Global_Settings, "BAKE_SETTINGS_Do_Constraint_Clear", text="Clear Constraint")
+    layout.prop(Global_Settings, "BAKE_SETTINGS_Do_Parent_Clear", text="Clear Parent")
+    layout.prop(Global_Settings, "BAKE_SETTINGS_Do_Clean", text="Clean Curves")
+    layout.prop(Global_Settings, "BAKE_SETTINGS_Do_Pose", text="Bake Pose")
+    layout.prop(Global_Settings, "BAKE_SETTINGS_Do_Object", text="Bake Object")
 
 def POLL_Armature(self, object):
     return object.type == "ARMATURE"
