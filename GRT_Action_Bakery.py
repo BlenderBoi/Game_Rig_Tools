@@ -290,7 +290,7 @@ class GRT_UL_Action_Bakery_List(bpy.types.UIList):
 
 class GRT_PT_Action_Bakery(bpy.types.Panel):
 
-    bl_label = "Action Bakery"
+    bl_label = "GRT: Action Bakery"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_category = "Game Rig Tools"
@@ -550,8 +550,8 @@ def draw_global_bake_settings(layout, context):
 
     layout.label(text="Settings")
 
-    layout.prop(Global_Settings, "Pre_Unmute_Constraint", text="Unmute Constraint Before Bake")
-    layout.prop(Global_Settings, "Post_Mute_Constraint", text="Mute Constraint After Bake")
+    layout.prop(Global_Settings, "Pre_Unmute_Constraint", text="Unmute Constraints Before Bake")
+    layout.prop(Global_Settings, "Post_Mute_Constraint", text="Mute Constraints After Bake")
 
     layout.separator()
 

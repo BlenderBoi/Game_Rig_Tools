@@ -19,6 +19,7 @@ def draw_armature_visibility_options(self, context, layout):
 
                 layout.prop(object.data, "display_type", text="Display As")
                 layout.prop(object.data, "show_names", text="Names")
+                layout.prop(object.data, "show_bone_custom_shapes", text="Shapes")
                 layout.prop(object.data, "show_group_colors", text="Group Colors")
                 layout.prop(object, "show_in_front", text="In Front")
 
@@ -84,31 +85,36 @@ def draw_armature_visibility_options(self, context, layout):
 def draw_panel(self, context, layout):
     addon_preferences = context.preferences.addons[addon_name].preferences
 
+    layout.label(text="Armature Constraint")
+
     row = layout.row(align=True)
 
-    operator = row.operator("gamerigtool.toogle_constraint", text="Mute")
+    operator = row.operator("gamerigtool.toogle_constraint", text="Mute", icon="HIDE_ON")
     operator.mute = True
     operator.use_selected = addon_preferences.use_selected
 
-    operator = row.operator("gamerigtool.toogle_constraint", text="Unmute")
+    operator = row.operator("gamerigtool.toogle_constraint", text="Unmute", icon="HIDE_OFF")
     operator.mute = False
     operator.use_selected = addon_preferences.use_selected
 
     row.prop(addon_preferences, "use_selected", text="", icon="RESTRICT_SELECT_OFF")
 
+
+    layout.label(text="Game Rig Tool")
+
     layout.operator("gamerigtool.generate_game_rig", text="Generate Game Rig")
 
-    if Utility.draw_subpanel(addon_preferences, addon_preferences.show_utility, "show_utility", "Utility Tool", layout):
+    if Utility.draw_subpanel(addon_preferences, addon_preferences.show_utility, "show_utility", "Utility Tools", layout):
 
         layout.operator("gamerigtool.constraint_to_armature_name", text="Constraint to Armature Name", icon="CONSTRAINT_BONE")
         layout.operator("gamerigtool.batch_rename_actions", text="Batch Rename Actions", icon="SORTALPHA")
         layout.operator("gamerigtool.flatten_hierarchy", text="Flatten Hierarchy", icon="NOCURVE")
         layout.operator("gamerigtool.disconnect_all_bones", text="Disconnect All Bones", icon="GROUP_BONE")
-        layout.operator("gamerigtool.apply_scale_op", text="Apply Armature Scale")
+        layout.operator("gamerigtool.apply_scale_op", text="Apply Armature Scale", icon="CON_SIZELIMIT")
 
 
 
-    if Utility.draw_subpanel(addon_preferences, addon_preferences.show_cleanup, "show_cleanup", "Clean Up Tool", layout):
+    if Utility.draw_subpanel(addon_preferences, addon_preferences.show_cleanup, "show_cleanup", "Clean Up Tools", layout):
 
         layout.operator("gamerigtool.unlock_bones_transform", text="Unlock Bones Transform", icon="UNLOCKED")
         layout.operator("gamerigtool.clear_all_bones_constraints", text="Clear All Bones Constraints", icon="CONSTRAINT")
@@ -126,7 +132,7 @@ def draw_panel(self, context, layout):
 
 class CGD_PT_Deform_Rig_Side_Panel(bpy.types.Panel):
 
-    bl_label = "Game Rig Tools"
+    bl_label = "GRT: Armature Tools"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_category = "Game Rig Tools"

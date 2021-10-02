@@ -49,8 +49,8 @@ class CGD_user_preferences(bpy.types.AddonPreferences):
     show_action_bakery: bpy.props.BoolProperty(default=False)
     toogle_constraints: bpy.props.BoolProperty(default=False)
 
-    game_rig_tool_panel_name: bpy.props.StringProperty(default="Game Rig Tools", update=update_panel)
-    action_bakery_panel_name: bpy.props.StringProperty(default="Game Rig Tools", update=update_panel)
+    game_rig_tool_panel_name: bpy.props.StringProperty(default="Game Rig Tool", update=update_panel)
+    action_bakery_panel_name: bpy.props.StringProperty(default="Game Rig Tool", update=update_panel)
 
     use_selected: bpy.props.BoolProperty(default=False)
 

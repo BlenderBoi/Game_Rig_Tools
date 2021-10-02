@@ -8,7 +8,7 @@ addon_directory = os.path.dirname(script_file)
 addon_name = os.path.basename(addon_directory)
 
 
-constraint_type = [("TRANSFORM","Copy Transform","Copy Transform"),("LOTROT","Copy Location & Copy Rotation","Lot Rot")]
+constraint_type = [("TRANSFORM","Copy Transform","Copy Transforms"),("LOTROT","Copy Location & Copy Rotation","Lot Rot"), ("NONE", "None (Do not Constraint)", "None")]
 ENUM_Extract_Mode = [("SELECTED","Selected","Selected"),("DEFORM","Deform","Deform"), ("SELECTED_DEFORM", "Selected Deform", "Selected Deform"), ("DEFORM_AND_SELECTED", "Deform and Selected", "Deform and Selected")]
 
 class GRT_Generate_Game_Rig(bpy.types.Operator):
@@ -70,7 +70,7 @@ class GRT_Generate_Game_Rig(bpy.types.Operator):
         layout.prop(self, "Deform_Armature_Name", text="Name")
 
         layout.prop(self, "Flat_Hierarchy", text="Flat Hierarchy")
-        layout.prop(self, "Disconnect_Bone", text="Disconnect Bone")
+        layout.prop(self, "Disconnect_Bone", text="Disconnect Bones")
 
 
         layout.label(text="Constraint Type:")
@@ -82,9 +82,9 @@ class GRT_Generate_Game_Rig(bpy.types.Operator):
 
         layout.separator()
 
-        layout.prop(self, "Deform_Bind_to_Deform_Rig", text="Bind to Deform Rig")
+        layout.prop(self, "Deform_Bind_to_Deform_Rig", text="Bind to Control Rig")
         if self.Deform_Bind_to_Deform_Rig:
-            layout.prop(self, "Parent_To_Deform_Rig", text="Parent Mesh Object to Deform Rig")
+            layout.prop(self, "Parent_To_Deform_Rig", text="Parent Mesh Object to Game Rig")
 
 
 
@@ -94,13 +94,13 @@ class GRT_Generate_Game_Rig(bpy.types.Operator):
         if Utility.draw_subpanel(self, self.Show_Advanced, "Show_Advanced", "Advanced", layout):
 
 
-            layout.label(text="Animator Armature")
+            layout.label(text="Control Rig")
             layout.prop(self, "Animator_Remove_BBone", text="Remove BBone")
 
 
             layout.separator()
 
-            layout.label(text="Deform Armature")
+            layout.label(text="Game Rig")
             layout.prop(self, "Deform_Remove_BBone", text="Remove BBone")
             layout.prop(self, "Deform_Move_Bone_to_Layer1", text="Move Bones to Layer 1")
 
@@ -112,8 +112,13 @@ class GRT_Generate_Game_Rig(bpy.types.Operator):
 
             layout.prop(self, "Deform_Unlock_Transform", text="Unlock Transform")
             layout.prop(self, "Deform_Remove_Shape", text="Remove Bone Shapes")
-            layout.prop(self, "Deform_Remove_All_Constraints", text="Remove Old Constraints")
-            layout.prop(self, "Deform_Copy_Transform", text="Constrain Deform Rig to Animation Rig")
+            layout.prop(self, "Deform_Remove_All_Constraints", text="Remove Constraints")
+
+
+            # layout.prop(self, "Deform_Copy_Transform", text="Constrain Deform Rig to Animation Rig")
+
+
+
             # layout.prop(self, "Deform_Bind_to_Deform_Rig", text="Bind to Deform Rig")
             # if self.Deform_Bind_to_Deform_Rig:
             #     layout.prop(self, "Parent_To_Deform_Rig", text="Parent Mesh Object to Deform Rig")
@@ -265,21 +270,25 @@ class GRT_Generate_Game_Rig(bpy.types.Operator):
                         for constraint in bone.constraints:
                             bone.constraints.remove(constraint)
 
-                    if self.Deform_Copy_Transform:
+                    # if self.Deform_Copy_Transform:
 
-                        if self.Constraint_Type == "TRANSFORM":
-                            constraint = bone.constraints.new("COPY_TRANSFORMS")
-                            constraint.target = object
-                            constraint.subtarget = object.data.bones.get(bone.name).name
+                    if self.Constraint_Type == "TRANSFORM":
+                        constraint = bone.constraints.new("COPY_TRANSFORMS")
+                        constraint.target = object
+                        constraint.subtarget = object.data.bones.get(bone.name).name
 
-                        if self.Constraint_Type == "LOTROT":
-                            constraint = bone.constraints.new("COPY_LOCATION")
-                            constraint.target = object
-                            constraint.subtarget = object.data.bones.get(bone.name).name
+                    if self.Constraint_Type == "LOTROT":
+                        constraint = bone.constraints.new("COPY_LOCATION")
+                        constraint.target = object
+                        constraint.subtarget = object.data.bones.get(bone.name).name
 
-                            constraint = bone.constraints.new("COPY_ROTATION")
-                            constraint.target = object
-                            constraint.subtarget = object.data.bones.get(bone.name).name
+                        constraint = bone.constraints.new("COPY_ROTATION")
+                        constraint.target = object
+                        constraint.subtarget = object.data.bones.get(bone.name).name
+
+                    if self.Constraint_Type == "NONE":
+                        pass
+
 
                 bpy.ops.object.mode_set(mode = 'OBJECT')
                 if self.Deform_Bind_to_Deform_Rig:
