@@ -1,7 +1,7 @@
 import bpy
 
 
-ENUM_Scope = [("ALL","All","All"),("SELECTED","Selected","Selected")]
+ENUM_Scope = [("SELECTED","Selected","Selected"), ("ALL","All","All")]
 
 class GRT_Convert_Bendy_Bones_To_Bones(bpy.types.Operator):
 
@@ -13,6 +13,8 @@ class GRT_Convert_Bendy_Bones_To_Bones(bpy.types.Operator):
     track_bone: bpy.props.BoolProperty(default=True)
     enable_stretch: bpy.props.BoolProperty(default=False)
 
+    to_layer: bpy.props.IntProperty(default=31, max=31, min=0)
+    move_to_layer: bpy.props.BoolProperty(default=True)
 
     def draw(self, context):
         layout = self.layout
@@ -21,6 +23,11 @@ class GRT_Convert_Bendy_Bones_To_Bones(bpy.types.Operator):
 
         layout.prop(self, "track_bone", text="Use Track Bone")
         layout.prop(self, "enable_stretch", text="Enable Stretch")
+
+        layout.prop(self, "move_to_layer", text="Move To Layer")
+
+        if self.move_to_layer:
+            layout.prop(self, "to_layer", text="Layer")
 
     @classmethod
     def poll(cls, context):
@@ -94,7 +101,7 @@ class GRT_Convert_Bendy_Bones_To_Bones(bpy.types.Operator):
 
                         if self.Scope == "SELECTED":
                             Bones = [object.data.edit_bones.get(bone.name) for bone in object.data.bones if bone.select and object.data.edit_bones.get(bone.name)]
-                            
+
                 Bone_Pairs = []
 
                 for Bone in Bones:
@@ -117,6 +124,14 @@ class GRT_Convert_Bendy_Bones_To_Bones(bpy.types.Operator):
                             Segment_Bone = Edit_Bones.new(Bone_Name)
                             Segment_Bone.matrix = seg_mat
                             Segment_Bone.length = PBone.length / Bone.bbone_segments
+
+                            if self.move_to_layer:
+
+                                layers = [False for x in range(32)]
+                                layers[self.to_layer] = True
+                                Segment_Bone.layers = layers
+
+                                object.data.layers[self.to_layer] = True
 
                             Segment_Bone.bbone_x = Bone.bbone_x * 2
                             Segment_Bone.bbone_z = Bone.bbone_z * 2
