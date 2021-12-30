@@ -1,6 +1,6 @@
 import bpy
 
-constraint_type = [("TRANSFORM","Copy Transform","Copy Transform"),("LOTROT","Copy Location & Copy Rotation","Lot Rot")]
+constraint_type = [("TRANSFORM","Copy Transform","Copy Transform"),("LOTROT","Copy Location & Copy Rotation","Lot Rot"), ("CHILD_OF","Child Of","Child Of")]
 
 class GRT_Constraint_To_Armature(bpy.types.Operator):
 
@@ -53,7 +53,6 @@ class GRT_Constraint_To_Armature(bpy.types.Operator):
 
         Editing_Armature = []
 
-
         if context.mode == "OBJECT":
             if Target_Armature and Source_Armature:
                 if Target_Armature.type == "ARMATURE" and Source_Armature.type == "ARMATURE":
@@ -62,20 +61,28 @@ class GRT_Constraint_To_Armature(bpy.types.Operator):
 
                         if context.mode == "OBJECT":
 
-                            if self.Constraint_Type == "TRANSFORM":
-                                constraint = bone.constraints.new("COPY_TRANSFORMS")
-                                constraint.target = Target_Armature
-                                constraint.subtarget = Target_Armature.data.bones.get(bone.name).name
+                            if Target_Armature.pose.bones.get(bone.name):
 
-                            if self.Constraint_Type == "LOTROT":
-                                constraint = bone.constraints.new("COPY_LOCATION")
-                                constraint.target = Target_Armature
-                                constraint.subtarget = Target_Armature.data.bones.get(bone.name).name
+                                if self.Constraint_Type == "TRANSFORM":
+                                    constraint = bone.constraints.new("COPY_TRANSFORMS")
+                                    constraint.target = Target_Armature
+                                    constraint.subtarget = Target_Armature.data.bones.get(bone.name).name
 
-                                constraint = bone.constraints.new("COPY_ROTATION")
-                                constraint.target = Target_Armature
-                                constraint.subtarget = Target_Armature.data.bones.get(bone.name).name
+                                if self.Constraint_Type == "LOTROT":
+                                    constraint = bone.constraints.new("COPY_LOCATION")
+                                    constraint.target = Target_Armature
+                                    constraint.subtarget = Target_Armature.data.bones.get(bone.name).name
 
+                                    constraint = bone.constraints.new("COPY_ROTATION")
+                                    constraint.target = Target_Armature
+                                    constraint.subtarget = Target_Armature.data.bones.get(bone.name).name
+
+                                if self.Constraint_Type == "CHILD_OF":
+                                    constraint = bone.constraints.new("CHILD_OF")
+                                    constraint.target = Target_Armature
+                                    constraint.subtarget = Target_Armature.data.bones.get(bone.name).name
+                            else:
+                                self.report({"INFO"}, "Bone Not Found, Skipped " + bone.name)
 
         if context.mode == "POSE":
 
@@ -95,21 +102,26 @@ class GRT_Constraint_To_Armature(bpy.types.Operator):
 
                                 if bone.bone.select:
 
-                                    if self.Constraint_Type == "TRANSFORM":
-                                        constraint = bone.constraints.new("COPY_TRANSFORMS")
-                                        constraint.target = Target_Armature
-                                        constraint.subtarget = Target_Armature.data.bones.get(bone.name).name
+                                    if Target_Armature.data.bones.get(bone.name):
 
-                                    if self.Constraint_Type == "LOTROT":
-                                        constraint = bone.constraints.new("COPY_LOCATION")
-                                        constraint.target = Target_Armature
-                                        constraint.subtarget = Target_Armature.data.bones.get(bone.name).name
+                                        if self.Constraint_Type == "TRANSFORM":
+                                            constraint = bone.constraints.new("COPY_TRANSFORMS")
+                                            constraint.target = Target_Armature
+                                            constraint.subtarget = Target_Armature.data.bones.get(bone.name).name
 
-                                        constraint = bone.constraints.new("COPY_ROTATION")
-                                        constraint.target = Target_Armature
-                                        constraint.subtarget = Target_Armature.data.bones.get(bone.name).name
+                                        if self.Constraint_Type == "LOTROT":
+                                            constraint = bone.constraints.new("COPY_LOCATION")
+                                            constraint.target = Target_Armature
+                                            constraint.subtarget = Target_Armature.data.bones.get(bone.name).name
 
+                                            constraint = bone.constraints.new("COPY_ROTATION")
+                                            constraint.target = Target_Armature
+                                            constraint.subtarget = Target_Armature.data.bones.get(bone.name).name
 
+                                        if self.Constraint_Type == "CHILD_OF":
+                                            constraint = bone.constraints.new("CHILD_OF")
+                                            constraint.target = Target_Armature
+                                            constraint.subtarget = Target_Armature.data.bones.get(bone.name).name
 
 
 
