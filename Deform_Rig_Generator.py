@@ -186,9 +186,10 @@ class GRT_Generate_Game_Rig(bpy.types.Operator):
                         bone.use_connect = False
 
                     if self.Remove_Custom_Properties:
-                        if bone.get("_RNA_UI"):
-                            for property in bone["_RNA_UI"]:
-                                del bone[property]
+                        bone.id_properties_clear()
+                        # if bone.get("_RNA_UI"):
+                        #     for property in bone["_RNA_UI"]:
+                        #         del bone[property]
 
                     if self.Deform_Remove_BBone:
                         bone.bbone_segments = 0
@@ -232,13 +233,15 @@ class GRT_Generate_Game_Rig(bpy.types.Operator):
                 game_rig.data.bones.update()
 
                 if self.Remove_Custom_Properties:
-                    if game_rig.get("_RNA_UI"):
-                        for property in game_rig["_RNA_UI"]:
-                            del game_rig[property]
+                    # if game_rig.get("_RNA_UI"):
+                    #     for property in game_rig["_RNA_UI"]:
+                    #         del game_rig[property]
 
-                    if game_rig.data.get("_RNA_UI"):
-                        for property in game_rig.data["_RNA_UI"]:
-                            del game_rig.data[property]
+                    game_rig.id_properties_clear()
+                    game_rig.data.id_properties_clear()
+                    # if game_rig.data.get("_RNA_UI"):
+                    #     for property in game_rig.data["_RNA_UI"]:
+                    #         del game_rig.data[property]
 
                 Pose_Bones = game_rig.pose.bones
 

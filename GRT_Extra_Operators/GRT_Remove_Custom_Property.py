@@ -38,52 +38,35 @@ class GRT_Remove_Custom_Property(bpy.types.Operator):
         object = context.object
         context.view_layer.update()
 
-        for object in context.selected_objects:
 
-            if object:
+        if object:
 
-                if self.object:
-                    if object.get("_RNA_UI"):
-                        for property in object["_RNA_UI"]:
-                            if object.get(property):
-                                del object[property]
+            if self.object:
+
+                object.id_properties_clear()
+
+            if object.type == "ARMATURE":
 
                 if self.data:
-                    if object.data.get("_RNA_UI"):
-                        for property in object.data["_RNA_UI"]:
-                            if object.data.get(property):
-                                del object.data[property]
+                    object.data.id_properties_clear()
 
+                if self.posebone:
+                    Pose_Bones = object.pose.bones
+                    for bone in Pose_Bones:
+                        bone.id_properties_clear()
 
-                if object.type == "ARMATURE":
+                if self.editbone:
+                    bpy.ops.object.mode_set(mode = 'OBJECT')
+                    bpy.ops.object.select_all(action='DESELECT')
+                    object.select_set(True)
+                    context.view_layer.objects.active = object
 
-                    if self.posebone:
-                        Pose_Bones = object.pose.bones
+                    bpy.ops.object.mode_set(mode = 'EDIT')
+                    Edit_Bones = object.data.edit_bones
+                    for bone in Edit_Bones:
+                        bone.id_properties_clear()
 
-                        for bone in Pose_Bones:
-
-                            if bone.get("_RNA_UI"):
-                                for property in bone["_RNA_UI"]:
-
-                                    if bone.get(property):
-                                        del bone[property]
-
-                    if self.editbone:
-
-                        bpy.ops.object.select_all(action='DESELECT')
-                        object.select_set(True)
-                        context.view_layer.objects.active = object
-
-                        bpy.ops.object.mode_set(mode = 'EDIT')
-                        Edit_Bones = object.data.edit_bones
-                        for bone in Edit_Bones:
-
-                            if bone.get("_RNA_UI"):
-                                for property in bone["_RNA_UI"]:
-
-                                    if bone.get(property):
-                                        del bone[property]
-                        bpy.ops.object.mode_set(mode = 'OBJECT')
+                    bpy.ops.object.mode_set(mode = 'OBJECT')
 
         context.view_layer.update()
         Utility.update_UI()
