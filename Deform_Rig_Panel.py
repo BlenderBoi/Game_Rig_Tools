@@ -114,7 +114,7 @@ def draw_panel(self, context, layout):
         layout.operator("gamerigtool.convert_bendy_bones_to_bones", text="Convert Bendy Bones to Bones", icon="BONE_DATA")
         layout.operator("gamerigtool.unbind_mesh", text="Unbind Mesh", icon="ARMATURE_DATA")
 
-
+        layout.operator("gamerigtool.batch_rename_vertex_groups", text="Batch Rename Vertex Groups", icon="GROUP_VERTEX")
 
     if Utility.draw_subpanel(addon_preferences, addon_preferences.show_cleanup, "show_cleanup", "Clean Up Tools", layout):
 
