@@ -4,7 +4,7 @@ import bpy
 
 
 class GRT_Constraint_Toogle(bpy.types.Operator):
-
+    """Constraint Toogle"""
     bl_idname = "gamerigtool.toogle_constraint"
     bl_label = "Toogle Constraints"
     bl_options = {'REGISTER', 'UNDO'}

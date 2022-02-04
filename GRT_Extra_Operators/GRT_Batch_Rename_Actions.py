@@ -6,7 +6,7 @@ Mode = [("REPLACE","Replace","Replace"),("PREFIX","Prefix","Prefix"),("SUFFIX","
 Scope = [("SELECTED_BAKER","Selected Action in Action Bakery","Selected Action in Action Bakery"),("ACTION_BAKERY","Action Bakery","Action Bakery"),("ALL","All","All")]
 
 class GRT_Batch_Rename_Actions(bpy.types.Operator):
-
+    """Batch Rename Actions"""
     bl_idname = "gamerigtool.batch_rename_actions"
     bl_label = "Batch Rename Actions"
     bl_options = {'REGISTER', 'UNDO'}

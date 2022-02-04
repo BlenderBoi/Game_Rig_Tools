@@ -2,7 +2,7 @@ import bpy
 
 
 class GRT_Remove_Unbind(bpy.types.Operator):
-
+    """Remove Unbind"""
     bl_idname = "gamerigtool.unbind_mesh"
     bl_label = "Clean Unbind"
     bl_options = {'REGISTER', 'UNDO'}

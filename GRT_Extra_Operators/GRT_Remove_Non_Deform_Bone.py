@@ -2,7 +2,7 @@
 import bpy
 
 class GRT_Remove_Non_Deform_Bone(bpy.types.Operator):
-
+    """Remove Non Deform Bone"""
     bl_idname = "gamerigtool.remove_non_deform_bone"
     bl_label = "Remove Non Deform Bone"
     bl_options = {'REGISTER', 'UNDO'}

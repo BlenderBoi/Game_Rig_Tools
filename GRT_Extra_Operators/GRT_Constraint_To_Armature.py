@@ -3,7 +3,7 @@ import bpy
 constraint_type = [("TRANSFORM","Copy Transform","Copy Transform"),("LOTROT","Copy Location & Copy Rotation","Lot Rot"), ("CHILD_OF","Child Of","Child Of")]
 
 class GRT_Constraint_To_Armature(bpy.types.Operator):
-
+    """Constraint to Armature"""
     bl_idname = "gamerigtool.constraint_to_armature_name"
     bl_label = "Constraint to Armature (Name Based)"
     bl_options = {'REGISTER', 'UNDO'}
@@ -22,14 +22,15 @@ class GRT_Constraint_To_Armature(bpy.types.Operator):
     def invoke(self, context, event):
 
         if context.mode == "OBJECT":
-            if context.object.type == "ARMATURE":
-                self.Source_Armature = context.object.name
+            if context.object:
+                if context.object.type == "ARMATURE":
+                    self.Source_Armature = context.object.name
 
-            for object in context.selected_objects:
-                if object.type == "ARMATURE":
-                    if not object == context.object:
-                        self.Target_Armature = object.name
-                        break
+                for object in context.selected_objects:
+                    if object.type == "ARMATURE":
+                        if not object == context.object:
+                            self.Target_Armature = object.name
+                            break
 
         return context.window_manager.invoke_props_dialog(self)
 
@@ -38,9 +39,9 @@ class GRT_Constraint_To_Armature(bpy.types.Operator):
         layout = self.layout
 
         if context.mode == "OBJECT":
-            layout.prop_search(self, "Source_Armature", bpy.data, "objects", text="Source Rig")
+            layout.prop_search(self, "Source_Armature", bpy.data, "objects", text="From")
 
-        layout.prop_search(self, "Target_Armature", bpy.data, "objects", text="Target Rig")
+        layout.prop_search(self, "Target_Armature", bpy.data, "objects", text="To")
 
         layout.prop(self, "Constraint_Type", text="Constraint Type")
         layout.prop(self, "Clear_Constraint", text="Clear Constraint")

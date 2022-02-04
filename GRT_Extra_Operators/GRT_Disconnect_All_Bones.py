@@ -3,7 +3,7 @@ import bpy
 
 
 class GRT_Disconnect_All_Bones(bpy.types.Operator):
-
+    """Disconnect All Bones"""
     bl_idname = "gamerigtool.disconnect_all_bones"
     bl_label = "Disconnect All Bones"
     bl_options = {'REGISTER', 'UNDO'}

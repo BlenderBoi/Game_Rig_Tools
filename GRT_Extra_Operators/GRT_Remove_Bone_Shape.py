@@ -2,7 +2,7 @@ import bpy
 
 
 class GRT_Remove_Bone_Shape(bpy.types.Operator):
-
+    """Remove Bone Shape"""
     bl_idname = "gamerigtool.remove_bone_shape"
     bl_label = "Remove Bone Shape"
     bl_options = {'REGISTER', 'UNDO'}

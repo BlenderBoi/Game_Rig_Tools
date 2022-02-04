@@ -1,7 +1,7 @@
 import bpy
 
 class GRT_Remove_Animation_Data(bpy.types.Operator):
-
+    """Remove Animation Data"""
     bl_idname = "gamerigtool.remove_animation_data"
     bl_label = "Remove Animation Data and Drivers"
     bl_options = {'REGISTER', 'UNDO'}

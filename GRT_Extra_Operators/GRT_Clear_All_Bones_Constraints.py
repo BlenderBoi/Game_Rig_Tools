@@ -1,7 +1,7 @@
 import bpy
 
 class GRT_Clear_All_Bones_Constraints(bpy.types.Operator):
-
+    """Clear All Bones Constraints"""
     bl_idname = "gamerigtool.clear_all_bones_constraints"
     bl_label = "Clear All Bones Constraints"
     bl_options = {'REGISTER', 'UNDO'}

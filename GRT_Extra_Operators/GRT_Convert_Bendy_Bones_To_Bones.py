@@ -4,7 +4,7 @@ import bpy
 ENUM_Scope = [("SELECTED","Selected","Selected"), ("ALL","All","All")]
 
 class GRT_Convert_Bendy_Bones_To_Bones(bpy.types.Operator):
-
+    """Convert Bendy Bones to Bones"""
     bl_idname = "gamerigtool.convert_bendy_bones_to_bones"
     bl_label = "Convert Bendy Bones To Bones"
     bl_options = {'REGISTER', 'UNDO'}

@@ -2,7 +2,7 @@ import bpy
 from .. import Utility
 
 class GRT_Remove_Custom_Property(bpy.types.Operator):
-
+    """Remove Custom Property"""
     bl_idname = "gamerigtool.remove_custom_property"
     bl_label = "Remove Custom Property"
     bl_options = {'REGISTER', 'UNDO'}

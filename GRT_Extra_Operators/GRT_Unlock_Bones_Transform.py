@@ -4,7 +4,7 @@ import bpy
 
 
 class GRT_Unlock_Bones_Transform(bpy.types.Operator):
-
+    """Unlock Bones Transform"""
     bl_idname = "gamerigtool.unlock_bones_transform"
     bl_label = "Unlock Bones Transform"
     bl_options = {'REGISTER', 'UNDO'}

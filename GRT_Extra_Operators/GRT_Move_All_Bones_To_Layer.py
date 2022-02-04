@@ -10,7 +10,7 @@ for layer in range(31):
     Layer_Default.append(False)
 
 class GRT_Move_All_Bones_To_Layer(bpy.types.Operator):
-
+    """Move All Bones to Layer"""
     bl_idname = "gamerigtool.move_all_bones_to_layer"
     bl_label = "Move All Bones to Layer"
     bl_options = {'REGISTER', 'UNDO'}

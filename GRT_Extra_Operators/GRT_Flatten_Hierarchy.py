@@ -4,7 +4,7 @@ import bpy
 ENUM_Scope = [("ALL","All","All"),("SELECTED","Selected","Selected")]
 
 class GRT_Flatten_Hierarchy(bpy.types.Operator):
-
+    """Flatten Hierarchy"""
     bl_idname = "gamerigtool.flatten_hierarchy"
     bl_label = "Flatten Hierarchy"
     bl_options = {'REGISTER', 'UNDO'}
