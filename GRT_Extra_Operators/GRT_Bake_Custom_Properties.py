@@ -218,20 +218,30 @@ class GRT_Bake_Custom_Properties(bpy.types.Operator):
         if len(properties) > 0:
                 
             if source:
+                if not source.animation_data:
+                    source.animation_data_create()
+                extrapolation = source.animation_data.action_extrapolation
+                source.animation_data.action_extrapolation = "NOTHING"
+
                 for i in range(self.frame_start,self.frame_end):
                     context.scene.frame_set(i)
                     if self.All_Properties:
                         for prop in properties:    
+                            if not source.animation_data:
+                                source.animation_data_create()
                             path = rna_prop_ui.rna_idprop_quote_path(prop)
                             source.keyframe_insert(data_path = path)
                             source.keyframe_insert(data_path = path)
                     else:
                         prop = self.get_property_name(context)
                         if prop in properties:
-                            path = rna_prop_ui.rna_idprop_quote_path(self.get_property_name(context))
 
+
+                            path = rna_prop_ui.rna_idprop_quote_path(self.get_property_name(context))
                             source.keyframe_insert(data_path = path)
                             source.keyframe_insert(data_path = path)
+                            
+                source.animation_data.action_extrapolation = extrapolation
 
         return {'FINISHED'}
 
