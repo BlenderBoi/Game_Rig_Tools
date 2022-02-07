@@ -1,8 +1,6 @@
 import bpy
 import rna_prop_ui
 
-#Check Edit Bone
-#Use All Bone
 
 
 def get_custom_properties(object):

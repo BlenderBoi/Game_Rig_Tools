@@ -486,12 +486,22 @@ class GRT_PT_Action_Bakery(bpy.types.Panel):
         layout.separator()
 
 
+        # box.label(text="Baked Name: " + Change_to_Baked_Name(context, item))
+        
         if not Global_Settings.Source_Armature:
-            layout.label(text="Select Control Rig", icon="ERROR")
+            box = layout.box()
+            box.label(text="Select Control Rig", icon="ERROR")
         if not Global_Settings.Target_Armature:
-            layout.label(text="Select Game Rig", icon="ERROR")
+            box = layout.box()
+            box.label(text="Select Game Rig", icon="ERROR")
 
-
+        for item in check_invalid_name(context):
+            box = layout.box()
+            box.label(text=item.Action.name, icon="ERROR")
+            box.label(text="Baked Action Have Same Action Name")
+            box.label(text="Possible Solutions:", icon="INFO")
+            box.label(text="A: Adjust Baked Name Settings")
+            box.label(text="B: Turn Off Overwrite")
 
         row = layout.row(align=True)
         row.operator("gamerigtool.bake_action_bakery")
@@ -658,6 +668,53 @@ class GRT_Action_Bakery_Global_Settings_Property_Group(bpy.types.PropertyGroup):
     BAKE_SETTINGS_Do_Parent_Clear: bpy.props.BoolProperty(default=False)
     BAKE_SETTINGS_Do_Clean: bpy.props.BoolProperty(default=False)
 
+
+def Change_to_Baked_Name(context, item):
+
+    scn = context.scene
+    Action_Bakery = scn.GRT_Action_Bakery
+    Settings = scn.GRT_Action_Bakery_Global_Settings
+
+    name = None
+
+    if item.Action: 
+        name = item.Action.name
+
+        if item.use_Local_Name:
+            name = item.LOCAL_Baked_Name
+        else: 
+            if Settings.GLOBAL_Baked_Name_Mode == "Suffix":
+                name = Settings.GLOBAL_Baked_Name_01 + item.Action.name
+            
+            if Settings.GLOBAL_Baked_Name_Mode == "PREFIX":
+                name = item.Action.name + Settings.GLOBAL_Baked_Name_01
+        
+            if Settings.GLOBAL_Baked_Name_Mode == "REPLACE":
+                name = item.Action.name.replace(Settings.GLOBAL_Baked_Name_01, Settings.GLOBAL_Baked_Name_02)
+    
+    return name
+
+
+
+
+def check_invalid_name(context):
+    scn = context.scene
+    Action_Bakery = scn.GRT_Action_Bakery
+    
+    Settings = scn.GRT_Action_Bakery_Global_Settings
+
+    check = []
+
+    if Settings.Overwrite:
+            
+        for item in Action_Bakery:
+            if item.Action:
+                if item.Action.name == Change_to_Baked_Name(context, item):
+                    check.append(item)
+
+    return check
+
+
 class GRT_Bake_Action_Bakery(bpy.types.Operator):
 
     bl_idname = "gamerigtool.bake_action_bakery"
@@ -672,7 +729,13 @@ class GRT_Bake_Action_Bakery(bpy.types.Operator):
         Global_Settings = scn.GRT_Action_Bakery_Global_Settings
 
         if Global_Settings.Source_Armature and Global_Settings.Target_Armature:
-            return True
+
+            # return True
+
+            if len(check_invalid_name(context)) == 0:
+
+                return True
+
         else:
             return False
 
