@@ -24,7 +24,7 @@ class GRT_Generate_Game_Rig(bpy.types.Operator):
 
     Constraint_Type: bpy.props.EnumProperty(items=constraint_type, default="LOTROT")
 
-    Animator_Remove_BBone : bpy.props.BoolProperty(default=True)
+    Animator_Remove_BBone : bpy.props.BoolProperty(default=False)
     Animator_Disable_Deform : bpy.props.BoolProperty(default=False)
 
     Parent_To_Deform_Rig: bpy.props.BoolProperty(default=True)

@@ -42,10 +42,13 @@ class GRT_Action_Bakery_Set_Frame_Range_To_Action(bpy.types.Operator):
         item_index = self.index
 
         active_baker = item_list[item_index]
+         
 
         if active_baker.Action:
-            active_baker.Set_FR_Start = active_baker.Action.frame_range[0]
-            active_baker.Set_FR_End = active_baker.Action.frame_range[1]
+            active_action = active_baker.Action
+
+            active_action.frame_start = active_action.curve_frame_range[0] 
+            active_action.frame_end = active_action.curve_frame_range[1]
 
 
         Utility.update_UI()
@@ -89,16 +92,7 @@ class GRT_Action_Bakery_List_Operator(bpy.types.Operator):
         item_list = scn.GRT_Action_Bakery
         item_index = self.index
 
-        # if len(item_list) > 0:
-        #
-        #     for item in item_list:
-        #         for index, action in enumerate(item_list):
-        #             if not item.Action:
-        #                 item_list.remove(index)
-        #                 break
-
         if self.operation == "CLEAR_ALL_ACTIONS":
-
 
             item_list.clear()
 
@@ -111,14 +105,11 @@ class GRT_Action_Bakery_List_Operator(bpy.types.Operator):
             if object:
                 if object.type == "ARMATURE":
 
-
                     if object.animation_data:
 
                         for nla_track in object.animation_data.nla_tracks:
 
                             for nla_strip in nla_track.strips:
-
-
 
                                 action = nla_strip.action
 
@@ -131,11 +122,11 @@ class GRT_Action_Bakery_List_Operator(bpy.types.Operator):
                                         item.Action = action
                                         item.LOCAL_Baked_Name = "BAKED_" + action.name
 
-                                        item.Set_FR_Start = action.frame_range[0]
-                                        item.Set_FR_End = action.frame_range[1]
+                                        action.frame_start = action.curve_frame_range[0]
+                                        action.frame_end = action.curve_frame_range[1]
+                                        action.use_frame_range = True
 
                                         scn.GRT_Action_Bakery_Index = len(item_list) - 1
-
 
             Utility.update_UI()
 
@@ -155,8 +146,10 @@ class GRT_Action_Bakery_List_Operator(bpy.types.Operator):
                         item.Action = action
                         item.LOCAL_Baked_Name = "BAKED_" + action.name
 
-                        item.Set_FR_Start = action.frame_range[0]
-                        item.Set_FR_End = action.frame_range[1]
+
+                        action.frame_start = action.curve_frame_range[0]
+                        action.frame_end = action.curve_frame_range[1]
+                        action.use_frame_range = True
 
                         scn.GRT_Action_Bakery_Index = len(item_list) - 1
 
@@ -187,8 +180,9 @@ class GRT_Action_Bakery_List_Operator(bpy.types.Operator):
                             item.Action = action
                             item.LOCAL_Baked_Name = "BAKED_" + action.name
 
-                            item.Set_FR_Start = action.frame_range[0]
-                            item.Set_FR_End = action.frame_range[1]
+                            action.frame_start = action.curve_frame_range[0]
+                            action.frame_end = action.curve_frame_range[1]
+                            action.use_frame_range = True
 
                             scn.GRT_Action_Bakery_Index = len(item_list) - 1
 
@@ -208,8 +202,10 @@ class GRT_Action_Bakery_List_Operator(bpy.types.Operator):
                     item.Action = action
                     item.LOCAL_Baked_Name = "BAKED_" + action.name
 
-                    item.Set_FR_Start = action.frame_range[0]
-                    item.Set_FR_End = action.frame_range[1]
+                    action.frame_start = action.curve_frame_range[0]
+                    action.frame_end = action.curve_frame_range[1]
+                    action.use_frame_range = True
+
 
                     scn.GRT_Action_Bakery_Index = len(item_list) - 1
 
@@ -224,6 +220,7 @@ class GRT_Action_Bakery_List_Operator(bpy.types.Operator):
 
             if len(item_list) == scn.GRT_Action_Bakery_Index:
                 scn.GRT_Action_Bakery_Index = len(item_list) - 1
+
             Utility.update_UI()
             return {'FINISHED'}
 
@@ -433,21 +430,27 @@ class GRT_PT_Action_Bakery(bpy.types.Panel):
                     col3.separator()
                     col3.label(text="Frame Range")
                     row3 = col3.row(align=True)
-                    row3.prop(active_baker, "Frame_Range_Mode", expand=True)
+                    row3.prop(active_baker, "Frame_Range_Mode", text="")
 
-                    if active_baker.Frame_Range_Mode == "ACTION":
-                        row3 = col3.row(align=True)
-                        # row3.prop(active_baker.Action, "frame_range", text="")
-                        row3.label(text="Start: " + str(active_baker.Action.frame_range[0]), icon="ACTION")
-                        row3.label(text="End: " + str(active_baker.Action.frame_range[1]), icon="ACTION")
-                        col3.separator()
+                    if active_baker.Frame_Range_Mode == "RANGE":
+                    # if active_baker.Frame_Range_Mode == "ACTION":
+                        if not active_baker.Action.use_frame_range:
+                            row3 = col3.row(align=True)
+                            # row3.prop(active_baker.Action, "frame_range", text="")
+                            row3.label(text="Start: " + str(active_baker.Action.curve_frame_range[0]), icon="ACTION")
+                            row3.label(text="End: " + str(active_baker.Action.curve_frame_range[1]), icon="ACTION")
+                            col3.separator()
 
-                    if active_baker.Frame_Range_Mode == "SET":
-                        row3 = col3.row(align=True)
-                        row3.prop(active_baker, "Set_FR_Start", text="Set Start")
-                        row3.prop(active_baker, "Set_FR_End", text="Set End")
-                        row3.operator("gamerigtool.action_bakery_set_frame_range_to_action", text="", icon="FILE_REFRESH").index = scn.GRT_Action_Bakery_Index
-                        col3.separator()
+                        if active_baker.Action.use_frame_range:
+                        # if active_baker.Frame_Range_Mode == "SET":
+                            row3 = col3.row(align=True)
+                            row3.prop(active_baker.Action, "frame_start", text="Start")
+                            row3.prop(active_baker.Action, "frame_end", text="End")
+                            row3.operator("gamerigtool.action_bakery_set_frame_range_to_action", text="", icon="FILE_REFRESH").index = scn.GRT_Action_Bakery_Index
+                            col3.separator()
+
+                        col3.prop(active_baker.Action, "use_frame_range", text="Manual Frame Range")
+                        col3.prop(active_baker, "offset_keyframe_to_frame_one", text="Offset to Frame One")
 
                     if active_baker.Frame_Range_Mode == "TRIM":
                         row3 = col3.row(align=True)
@@ -455,11 +458,11 @@ class GRT_PT_Action_Bakery(bpy.types.Panel):
                         row3.prop(active_baker, "Trim_FR_End", text="Trim End")
 
                         row3 = col3.row(align=True)
-                        row3.label(text="Start: " + str(active_baker.Action.frame_range[0] + active_baker.Trim_FR_Start), icon="SCULPTMODE_HLT")
-                        row3.label(text="End: "+ str(active_baker.Action.frame_range[1] - active_baker.Trim_FR_End), icon="SCULPTMODE_HLT")
+                        row3.label(text="Start: " + str(active_baker.Action.curve_frame_range[0] + active_baker.Trim_FR_Start), icon="SCULPTMODE_HLT")
+                        row3.label(text="End: "+ str(active_baker.Action.curve_frame_range[1] - active_baker.Trim_FR_End), icon="SCULPTMODE_HLT")
                         col3.separator()
 
-                    col3.prop(active_baker, "offset_keyframe_to_frame_one", text="Offset to Frame One")
+                        col3.prop(active_baker, "offset_keyframe_to_frame_one", text="Offset to Frame One")
                 # if active_baker.use_Local_Trim:
                 #
                 #     col3.prop(active_baker, "LOCAL_Trim", text="Trim")
@@ -577,14 +580,6 @@ def draw_global_bake_settings(layout, context):
 def POLL_Armature(self, object):
     return object.type == "ARMATURE"
 
-def UPDATE_SET_Start(self, context):
-    if self.Set_FR_Start >= self.Set_FR_End:
-        self.Set_FR_End = self.Set_FR_Start + 1
-
-def UPDATE_SET_End(self, context):
-    if self.Set_FR_End <= self.Set_FR_Start:
-        self.Set_FR_Start = self.Set_FR_End - 1
-
 #Set to Action
 
 def UPDATE_TRIM_Start(self, context):
@@ -609,7 +604,7 @@ def UPDATE_TRIM_End(self, context):
 
 
 ENUM_Trim_Type = [("KEYFRAME","Keyframe","Keyframe"),("NLA_STRIP","NLA Strip","NLA Strip")]
-ENUM_Frame_Range_Mode = [("ACTION","Action","Action"),("SET","Set","Set"),("TRIM","Trim","Trim")]
+ENUM_Frame_Range_Mode = [("RANGE","Range","Range"),("TRIM","Trim","Trim")]
 class GRT_Action_Bakery_Property_Group(bpy.types.PropertyGroup):
 
     Action : bpy.props.PointerProperty(name="Action", type=bpy.types.Action)
@@ -624,8 +619,6 @@ class GRT_Action_Bakery_Property_Group(bpy.types.PropertyGroup):
     use_Local_Trim: bpy.props.BoolProperty()
 
     Frame_Range_Mode: bpy.props.EnumProperty(items=ENUM_Frame_Range_Mode)
-    Set_FR_Start: bpy.props.IntProperty(min=0, update=UPDATE_SET_Start)
-    Set_FR_End: bpy.props.IntProperty(min=1, default=1, update=UPDATE_SET_End)
 
     Trim_FR_Start: bpy.props.IntProperty(min=0, update=UPDATE_TRIM_Start)
     Trim_FR_End: bpy.props.IntProperty(min=0, update=UPDATE_TRIM_End)
@@ -716,7 +709,7 @@ def check_invalid_name(context):
 
 
 class GRT_Bake_Action_Bakery(bpy.types.Operator):
-
+    """Bake Action Bakery"""""
     bl_idname = "gamerigtool.bake_action_bakery"
     bl_label = "Bake Action Bakery"
     bl_info = {'UNDO', "REGISTER"}
@@ -785,15 +778,11 @@ class GRT_Bake_Action_Bakery(bpy.types.Operator):
 
         if control_rig and deform_rig:
 
-
-
             if control_rig.type == "ARMATURE" and deform_rig.type == "ARMATURE":
 
                 Control_Rig_Action_Save = None
 
                 for Baker in Action_Bakery:
-
-
 
                     if control_rig.animation_data:
 
@@ -851,15 +840,26 @@ class GRT_Bake_Action_Bakery(bpy.types.Operator):
                                     # else:
                                     #     frame = [i for i in range(int(action.frame_range[0]), int(action.frame_range[1])+1-Global_Settings.GLOBAL_Trim_End_Frame)]
 
-                                if Baker.Frame_Range_Mode == "SET":
-                                    start_frame = Baker.Set_FR_Start
-                                    end_frame = Baker.Set_FR_End + 1
-                                if Baker.Frame_Range_Mode == "ACTION":
-                                    start_frame = int(action.frame_range[0])
-                                    end_frame = int(action.frame_range[1]) + 1
+
+
+
+                                if Baker.Frame_Range_Mode == "RANGE":
+
+                                    if Baker.Action.use_frame_range:
+                                        start_frame = int(action.frame_start)
+                                        end_frame = int(action.frame_end) + 1
+
+                                # if Baker.Frame_Range_Mode == "ACTION":
+                                    if not Baker.Action.use_frame_range:
+
+                                        start_frame = int(action.curve_frame_range[0])
+                                        end_frame = int(action.curve_frame_range[1]) + 1
+
                                 if Baker.Frame_Range_Mode == "TRIM":
-                                    start_frame = int(action.frame_range[0]) + Baker.Trim_FR_Start
-                                    end_frame = int(action.frame_range[1]) + 1 - Baker.Trim_FR_End
+
+                                    start_frame = int(action.curve_frame_range[0]) + Baker.Trim_FR_Start
+                                    end_frame = int(action.curve_frame_range[1]) + 1 - Baker.Trim_FR_End
+
 
 
                                 frame = [i for i in range(start_frame, end_frame)]
@@ -905,7 +905,7 @@ class GRT_Bake_Action_Bakery(bpy.types.Operator):
 
                                 if Baker.offset_keyframe_to_frame_one:
 
-                                    start_frame = Baked_Action[0].frame_range[0]
+                                    start_frame = Baked_Action[0].curve_frame_range[0]
 
                                     for fcurve in Baked_Action[0].fcurves:
                                         for kp in fcurve.keyframe_points:
@@ -915,7 +915,7 @@ class GRT_Bake_Action_Bakery(bpy.types.Operator):
 
 
                                 if Global_Settings.Push_to_NLA:
-                                    deform_rig.animation_data.nla_tracks.new().strips.new(Baked_Action[0].name, Baked_Action[0].frame_range[0], Baked_Action[0])
+                                    deform_rig.animation_data.nla_tracks.new().strips.new(Baked_Action[0].name, int(Baked_Action[0].frame_range[0]), Baked_Action[0])
                                     # deform_rig.animation_data.nla_tracks.new().strips.new(Baked_Action[0].name, action.frame_range[0], Baked_Action[0])
                                     # deform_rig.animation_data.nla_tracks.new().strips.new(Baked_Action[0].name, 0, Baked_Action[0])
 

@@ -30,57 +30,6 @@ def draw_armature_visibility_options(self, context, layout):
 
 
 
-#
-# def draw_action_bakery(self, context, layout):
-#     addon_preferences = context.preferences.addons[addon_name].preferences
-#
-#     scn = context.scene
-#     row = layout.row(align=True)
-#     row.alignment ="LEFT"
-#
-#     if addon_preferences.show_action_bakery:
-#         row.prop(addon_preferences, "show_action_bakery", text="Action Bakery", emboss=False, icon="TRIA_DOWN")
-#         layout.template_list("CGD_UL_Action_Bakery_List", "", bpy.data, "actions", scn, "action_bakery_index")
-#
-#         row = layout.row(align=True)
-#         row.operator("cgd.check_all_for_bake", text="Select All").mode = True
-#         row.operator("cgd.check_all_for_bake", text="Deselect All").mode = False
-#
-#         if len(bpy.data.actions) > 0:
-#             active_action = bpy.data.actions[scn.action_bakery_index]
-#
-#             # layout.prop(active_action, "use_custom_range", text="Use Custom Range")
-#             #
-#             # row = layout.row(align=True)
-#             #
-#             # if active_action.use_custom_range:
-#             #     row.prop(active_action, "custom_range_start", text="Custom Start")
-#             #     row.prop(active_action, "custom_range_end", text="Custom End")
-#
-#             layout.prop(active_action, "loop", text="Loop")
-#
-#
-#             layout.label(text="Bake Objects")
-#             layout.prop(scn, "bake_control_armature", text="Control Armature")
-#             layout.prop(scn, "bake_deform_armature", text="Deform Armature")
-#
-#             if not scn.bake_control_armature:
-#                 layout.label(text="Control Armature Not Picked", icon="ERROR")
-#
-#             if not scn.bake_deform_armature:
-#                 layout.label(text="Deform Armature Not Picked", icon="ERROR")
-#
-#
-#             layout.prop(scn, "Push_to_NLA", text="Push to NLA")
-#             layout.prop(scn, "Unmute_Before_Bake", text="Unmute Constraint Before Bake")
-#             layout.prop(scn, "Mute_After_Bake", text="Mute Constraint After Bake")
-#
-#
-#             if scn.bake_deform_armature and scn.bake_control_armature:
-#                 layout.operator("cgd.bake_action_bakery", text="Bake Action Bakery")
-#
-#     else:
-#         row.prop(addon_preferences, "show_action_bakery", text="Action Bakery", emboss=False, icon="TRIA_RIGHT")
 
 def draw_panel(self, context, layout):
     addon_preferences = context.preferences.addons[addon_name].preferences
@@ -131,7 +80,6 @@ def draw_panel(self, context, layout):
 
         layout.operator("gamerigtool.move_all_bones_to_layer", text="Move All Bones to Layer", icon="SEQ_STRIP_DUPLICATE")
 
-    # draw_action_bakery(self, context, layout)
 
 
 class CGD_PT_Deform_Rig_Side_Panel(bpy.types.Panel):
@@ -140,22 +88,6 @@ class CGD_PT_Deform_Rig_Side_Panel(bpy.types.Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_category = "Game Rig Tools"
-
-    # @classmethod
-    # def poll(cls, context):
-    #
-    #     addon_preferences = context.preferences.addons[addon_name].preferences
-        #
-        # if context.object:
-        #     if context.object.type == "ARMATURE":
-
-
-        # if addon_preferences.side_panel:
-        #     return True
-        # else:
-        #     return False
-
-
 
     def draw(self, context):
         layout = self.layout
