@@ -1,6 +1,6 @@
 
 bl_info = {
-    "name": "Game Rig Tools",
+    "name": "Game Rig Tools (Beta)",
     "author": "BlenderBoi, Xin",
     "version": (1, 7, 0),
     "blender": (3, 10, 0),
