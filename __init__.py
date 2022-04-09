@@ -2,7 +2,7 @@
 bl_info = {
     "name": "Game Rig Tools",
     "author": "BlenderBoi, Xin",
-    "version": (1, 7, 0),
+    "version": (1, 7, 1),
     "blender": (3, 1, 0),
     "description": "Generate a Deform Rig base on CGDive's Game-Ready Rig Video",
     "warning": "",
