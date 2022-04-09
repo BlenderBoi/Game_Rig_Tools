@@ -5,7 +5,7 @@ bl_info = {
     "version": (1, 7, 0),
     "blender": (3, 1, 0),
     "description": "Generate a Deform Rig base on CGDive's Game-Ready Rig Video",
-    "warning": "Beta",
+    "warning": "",
     "doc_url": "https://tarry-dill-523.notion.site/Game-Rig-Tools-Documentation-dc61839fd1d04147a42aa89e366575fb",
     "category": "Armature",
 }
