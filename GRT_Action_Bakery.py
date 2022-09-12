@@ -44,8 +44,8 @@ class GRT_Action_Bakery_Set_Frame_Range_To_Action(bpy.types.Operator):
         active_baker = item_list[item_index]
 
         if active_baker.Action:
-            active_baker.Set_FR_Start = active_baker.Action.frame_range[0]
-            active_baker.Set_FR_End = active_baker.Action.frame_range[1]
+            active_baker.Set_FR_Start = int(active_baker.Action.frame_range[0])
+            active_baker.Set_FR_End = int(active_baker.Action.frame_range[1])
 
 
         Utility.update_UI()
@@ -131,8 +131,8 @@ class GRT_Action_Bakery_List_Operator(bpy.types.Operator):
                                         item.Action = action
                                         item.LOCAL_Baked_Name = "BAKED_" + action.name
 
-                                        item.Set_FR_Start = action.frame_range[0]
-                                        item.Set_FR_End = action.frame_range[1]
+                                        item.Set_FR_Start = int(action.frame_range[0])
+                                        item.Set_FR_End = int(action.frame_range[1])
 
                                         scn.GRT_Action_Bakery_Index = len(item_list) - 1
 
@@ -155,8 +155,8 @@ class GRT_Action_Bakery_List_Operator(bpy.types.Operator):
                         item.Action = action
                         item.LOCAL_Baked_Name = "BAKED_" + action.name
 
-                        item.Set_FR_Start = action.frame_range[0]
-                        item.Set_FR_End = action.frame_range[1]
+                        item.Set_FR_Start = int(action.frame_range[0])
+                        item.Set_FR_End = int(action.frame_range[1])
 
                         scn.GRT_Action_Bakery_Index = len(item_list) - 1
 
@@ -187,8 +187,8 @@ class GRT_Action_Bakery_List_Operator(bpy.types.Operator):
                             item.Action = action
                             item.LOCAL_Baked_Name = "BAKED_" + action.name
 
-                            item.Set_FR_Start = action.frame_range[0]
-                            item.Set_FR_End = action.frame_range[1]
+                            item.Set_FR_Start = int(action.frame_range[0])
+                            item.Set_FR_End = int(action.frame_range[1])
 
                             scn.GRT_Action_Bakery_Index = len(item_list) - 1
 
@@ -208,8 +208,8 @@ class GRT_Action_Bakery_List_Operator(bpy.types.Operator):
                     item.Action = action
                     item.LOCAL_Baked_Name = "BAKED_" + action.name
 
-                    item.Set_FR_Start = action.frame_range[0]
-                    item.Set_FR_End = action.frame_range[1]
+                    item.Set_FR_Start = int(action.frame_range[0])
+                    item.Set_FR_End = int(action.frame_range[1])
 
                     scn.GRT_Action_Bakery_Index = len(item_list) - 1
 
@@ -589,8 +589,8 @@ def UPDATE_SET_End(self, context):
 
 def UPDATE_TRIM_Start(self, context):
     if self.Action:
-        start = self.Action.frame_range[0] + self.Trim_FR_Start
-        end = self.Action.frame_range[1] - self.Trim_FR_End
+        start = int(self.Action.frame_range[0])+ self.Trim_FR_Start
+        end = int(self.Action.frame_range[1]) - self.Trim_FR_End
 
         if start >= end:
 
@@ -600,12 +600,12 @@ def UPDATE_TRIM_Start(self, context):
 def UPDATE_TRIM_End(self, context):
 
     if self.Action:
-        start = self.Action.frame_range[0] + self.Trim_FR_Start
-        end = self.Action.frame_range[1] - self.Trim_FR_End
+        start = int(self.Action.frame_range[0]) + self.Trim_FR_Start
+        end = int(self.Action.frame_range[1])- self.Trim_FR_End
 
         if end <= start:
 
-            self.Trim_FR_End = self.Action.frame_range[1] - self.Action.frame_range[0] + self.Trim_FR_Start -1
+            self.Trim_FR_End = int(self.Action.frame_range[1]) - int(self.Action.frame_range[0]) + self.Trim_FR_Start -1
 
 
 ENUM_Trim_Type = [("KEYFRAME","Keyframe","Keyframe"),("NLA_STRIP","NLA Strip","NLA Strip")]
@@ -905,7 +905,7 @@ class GRT_Bake_Action_Bakery(bpy.types.Operator):
 
                                 if Baker.offset_keyframe_to_frame_one:
 
-                                    start_frame = Baked_Action[0].frame_range[0]
+                                    start_frame = int(Baked_Action[0].frame_range[0])
 
                                     for fcurve in Baked_Action[0].fcurves:
                                         for kp in fcurve.keyframe_points:
@@ -915,7 +915,7 @@ class GRT_Bake_Action_Bakery(bpy.types.Operator):
 
 
                                 if Global_Settings.Push_to_NLA:
-                                    deform_rig.animation_data.nla_tracks.new().strips.new(Baked_Action[0].name, Baked_Action[0].frame_range[0], Baked_Action[0])
+                                    deform_rig.animation_data.nla_tracks.new().strips.new(Baked_Action[0].name, int(Baked_Action[0].frame_range[0]), Baked_Action[0])
                                     # deform_rig.animation_data.nla_tracks.new().strips.new(Baked_Action[0].name, action.frame_range[0], Baked_Action[0])
                                     # deform_rig.animation_data.nla_tracks.new().strips.new(Baked_Action[0].name, 0, Baked_Action[0])
 
