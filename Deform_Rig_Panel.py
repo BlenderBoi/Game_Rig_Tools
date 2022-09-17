@@ -118,6 +118,9 @@ def draw_panel(self, context, layout):
 
         layout.operator("gamerigtool.bake_custom_properties", text="Bake Custom Properties", icon="PROPERTIES")
 
+        layout.operator("gamerigtool.proximity_parent", text="Proximity Parent", icon="CON_CHILDOF")
+
+
     if Utility.draw_subpanel(addon_preferences, addon_preferences.show_cleanup, "show_cleanup", "Clean Up Tools", layout):
 
         layout.operator("gamerigtool.unlock_bones_transform", text="Unlock Bones Transform", icon="UNLOCKED")
