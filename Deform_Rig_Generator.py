@@ -15,7 +15,7 @@ class GRT_Generate_Game_Rig(bpy.types.Operator):
     """This will Generate a Deform Game Rig based on the step in CGDive Video"""
     bl_idname = "gamerigtool.generate_game_rig"
     bl_label = "Generate Game Rig"
-    bl_options = {'UNDO'}
+    bl_options = {'UNDO', 'PRESET'}
 
 
     Extract_Mode: bpy.props.EnumProperty(items=ENUM_Extract_Mode, default="DEFORM")
@@ -24,7 +24,7 @@ class GRT_Generate_Game_Rig(bpy.types.Operator):
 
     Constraint_Type: bpy.props.EnumProperty(items=constraint_type, default="LOTROT")
 
-    Animator_Remove_BBone : bpy.props.BoolProperty(default=True)
+    Animator_Remove_BBone : bpy.props.BoolProperty(default=False)
     Animator_Disable_Deform : bpy.props.BoolProperty(default=False)
 
     Parent_To_Deform_Rig: bpy.props.BoolProperty(default=True)
