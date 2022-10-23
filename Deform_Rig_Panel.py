@@ -12,9 +12,13 @@ def draw_armature_visibility_options(self, context, layout):
 
     object = context.object
 
+
     if object:
         if object.type == "ARMATURE":
-            if Utility.draw_subpanel(addon_preferences, addon_preferences.show_armature_display, "show_armature_display", "Armature Display", layout):
+
+            layout = layout.box()
+
+            if Utility.draw_subpanel(addon_preferences, addon_preferences.show_armature_display, "show_armature_display", context.object.name, layout):
 
 
                 layout.prop(object.data, "display_type", text="Display As")
@@ -85,7 +89,56 @@ def draw_armature_visibility_options(self, context, layout):
 def draw_panel(self, context, layout):
     addon_preferences = context.preferences.addons[addon_name].preferences
 
-    layout.label(text="Armature Constraint")
+    # layout.label(text="Armature Constraint")
+
+
+
+
+
+    # box = layout.box()
+    # if Utility.draw_subpanel(context.scene.GRT_Settings, context.scene.GRT_Settings.Show_GameRigTools, "Show_GameRigTools", "Game Rig Tools", box):
+
+    #     box.label(text="Control Rig")
+    #     row = box.row(align=True)
+    #     row.prop(context.scene.GRT_Settings, "ControlRig", text="", icon="ARMATURE_DATA")
+    #     row.prop(context.scene.GRT_Settings, "active_to_control_rig", text="", icon="RESTRICT_SELECT_OFF")
+    #     box.label(text="Game Rig")
+    #     row = box.row(align=True)
+    #     row.prop(context.scene.GRT_Settings, "GameRig", text="", icon="OUTLINER_OB_ARMATURE")
+    #     row.prop(context.scene.GRT_Settings, "active_to_game_rig", text="", icon="RESTRICT_SELECT_OFF")
+
+    #     box.separator()
+
+
+    
+    
+    #     col = box.column()
+
+    #     if not context.scene.GRT_Settings.ControlRig:
+    #         col.enabled = False
+
+    #     if not context.scene.GRT_Settings.GameRig:
+    #         op = col.operator("gamerigtool.generate_game_rig", text="Generate Game Rig", icon="FILE_REFRESH")
+    #         op.Use_Regenerate_Rig = False
+    #         op.Use_Legacy = False
+    #     else:
+    #         op = col.operator("gamerigtool.generate_game_rig", text="Regenerate Game Rig", icon="FILE_REFRESH")
+    #         op.Use_Regenerate_Rig = True
+    #         op.Use_Legacy = False
+
+    #     if not context.scene.GRT_Settings.ControlRig:
+    #         box.label(text="Select Control Rig", icon="INFO")
+
+
+
+    # layout.separator()
+
+    # layout.label(text="Legacy", icon="INFO")
+    col = layout.column(align=True)
+    op = col.operator("gamerigtool.generate_game_rig", text="Generate Game Rig", icon="RESTRICT_SELECT_OFF")
+    col.scale_y = 2
+    op.Use_Regenerate_Rig = False
+    op.Use_Legacy = True
 
     row = layout.row(align=True)
 
@@ -100,100 +153,70 @@ def draw_panel(self, context, layout):
     row.prop(addon_preferences, "use_selected", text="", icon="RESTRICT_SELECT_OFF")
 
 
-    # layout.label(text="Game Rig Tool")
-
-    # def draw_subpanel(self, boolean, property, label, layout):
-
-    box = layout.box()
-    if Utility.draw_subpanel(context.scene.GRT_Settings, context.scene.GRT_Settings.Show_GameRigTools, "Show_GameRigTools", "Game Rig Tools", box):
-
-        box.label(text="Control Rig")
-        row = box.row(align=True)
-        row.prop(context.scene.GRT_Settings, "ControlRig", text="", icon="ARMATURE_DATA")
-        row.prop(context.scene.GRT_Settings, "active_to_control_rig", text="", icon="RESTRICT_SELECT_OFF")
-        box.label(text="Game Rig")
-        row = box.row(align=True)
-        row.prop(context.scene.GRT_Settings, "GameRig", text="", icon="OUTLINER_OB_ARMATURE")
-        row.prop(context.scene.GRT_Settings, "active_to_game_rig", text="", icon="RESTRICT_SELECT_OFF")
-
-        box.separator()
-
-
-    
-    
-        col = box.column()
-
-        if not context.scene.GRT_Settings.ControlRig:
-            col.enabled = False
-
-        if not context.scene.GRT_Settings.GameRig:
-            op = col.operator("gamerigtool.generate_game_rig", text="Generate Game Rig", icon="FILE_REFRESH")
-            op.Use_Regenerate_Rig = False
-            op.Use_Legacy = False
-        else:
-            op = col.operator("gamerigtool.generate_game_rig", text="Regenerate Game Rig", icon="FILE_REFRESH")
-            op.Use_Regenerate_Rig = True
-            op.Use_Legacy = False
-
-        if not context.scene.GRT_Settings.ControlRig:
-            box.label(text="Select Control Rig", icon="INFO")
-
-
 
     layout.separator()
-    op = layout.operator("gamerigtool.generate_game_rig", text="Generate Game Rig (Legacy)")
-    op.Use_Regenerate_Rig = False
-    op.Use_Legacy = True
+    draw_armature_visibility_options(self, context, layout)
+
+
     # op = layout.operator("gamerigtool.generate_game_rig", text="Legacy Generate")
     # op.Use_Regenerate_Rig = False
 
-    if Utility.draw_subpanel(addon_preferences, addon_preferences.show_utility, "show_utility", "Utility Tools", layout):
-
-        layout.operator("gamerigtool.constraint_to_armature_name", text="Constraint to Armature Name", icon="CONSTRAINT_BONE")
-        layout.operator("gamerigtool.batch_rename_actions", text="Batch Rename Actions", icon="SORTALPHA")
-        layout.operator("gamerigtool.flatten_hierarchy", text="Flatten Hierarchy", icon="NOCURVE")
-        layout.operator("gamerigtool.disconnect_all_bones", text="Disconnect All Bones", icon="GROUP_BONE")
-        layout.operator("gamerigtool.apply_scale_op", text="Apply Armature Scale", icon="CON_SIZELIMIT")
-        layout.operator("gamerigtool.convert_bendy_bones_to_bones", text="Convert Bendy Bones to Bones", icon="BONE_DATA")
-        layout.operator("gamerigtool.unbind_mesh", text="Unbind Mesh", icon="ARMATURE_DATA")
-
-        layout.operator("gamerigtool.batch_rename_vertex_groups", text="Batch Rename Vertex Groups", icon="GROUP_VERTEX")
-
-        layout.operator("gamerigtool.bake_custom_properties", text="Bake Custom Properties", icon="PROPERTIES")
-
-        layout.operator("gamerigtool.proximity_parent", text="Proximity Parent", icon="CON_CHILDOF")
 
 
-    if Utility.draw_subpanel(addon_preferences, addon_preferences.show_cleanup, "show_cleanup", "Clean Up Tools", layout):
 
-        layout.operator("gamerigtool.unlock_bones_transform", text="Unlock Bones Transform", icon="UNLOCKED")
-        layout.operator("gamerigtool.clear_all_bones_constraints", text="Clear All Bones Constraints", icon="CONSTRAINT")
 
-        layout.operator("gamerigtool.remove_non_deform_bone", text="Remove Non Deform Bone", icon="BONE_DATA")
-        layout.operator("gamerigtool.remove_animation_data", text="Remove Animation Data", icon="ACTION")
-        layout.operator("gamerigtool.remove_bbone", text="Remove BBone", icon="BONE_DATA")
-        layout.operator("gamerigtool.remove_bone_shape", text="Remove Bone Shapes", icon="CUBE")
-        layout.operator("gamerigtool.remove_custom_property", text="Remove Custom Properties", icon="PROPERTIES")
 
-        layout.operator("gamerigtool.move_all_bones_to_layer", text="Move All Bones to Layer", icon="SEQ_STRIP_DUPLICATE")
+    # if Utility.draw_subpanel(addon_preferences, addon_preferences.show_utility, "show_utility", "Utility Tools", layout):
+
+    layout.separator()
+    layout.label(text="Utility Tool", icon="MODIFIER")
+    layout.operator("gamerigtool.constraint_to_armature_name", text="Constraint to Armature Name", icon="CONSTRAINT_BONE")
+    layout.operator("gamerigtool.batch_rename_actions", text="Batch Rename Actions", icon="SORTALPHA")
+    layout.operator("gamerigtool.flatten_hierarchy", text="Flatten Hierarchy", icon="NOCURVE")
+    layout.operator("gamerigtool.disconnect_all_bones", text="Disconnect All Bones", icon="GROUP_BONE")
+    layout.operator("gamerigtool.apply_scale_op", text="Apply Armature Scale", icon="CON_SIZELIMIT")
+    layout.operator("gamerigtool.convert_bendy_bones_to_bones", text="Convert Bendy Bones to Bones", icon="BONE_DATA")
+    layout.operator("gamerigtool.unbind_mesh", text="Unbind Mesh", icon="ARMATURE_DATA")
+
+    layout.operator("gamerigtool.batch_rename_vertex_groups", text="Batch Rename Vertex Groups", icon="GROUP_VERTEX")
+
+    layout.operator("gamerigtool.bake_custom_properties", text="Bake Custom Properties", icon="PROPERTIES")
+
+    layout.operator("gamerigtool.proximity_parent", text="Proximity Parent", icon="CON_CHILDOF")
+
+
+    # if Utility.draw_subpanel(addon_preferences, addon_preferences.show_cleanup, "show_cleanup", "Clean Up Tools", layout):
+
+    layout.separator()
+    layout.separator()
+    layout.label(text="Clean Up Tool", icon="BRUSH_DATA")
+    layout.operator("gamerigtool.unlock_bones_transform", text="Unlock Bones Transform", icon="UNLOCKED")
+    layout.operator("gamerigtool.clear_all_bones_constraints", text="Clear All Bones Constraints", icon="CONSTRAINT")
+
+    layout.operator("gamerigtool.remove_non_deform_bone", text="Remove Non Deform Bone", icon="BONE_DATA")
+    layout.operator("gamerigtool.remove_animation_data", text="Remove Animation Data", icon="ACTION")
+    layout.operator("gamerigtool.remove_bbone", text="Remove BBone", icon="BONE_DATA")
+    layout.operator("gamerigtool.remove_bone_shape", text="Remove Bone Shapes", icon="CUBE")
+    layout.operator("gamerigtool.remove_custom_property", text="Remove Custom Properties", icon="PROPERTIES")
+
+    layout.operator("gamerigtool.move_all_bones_to_layer", text="Move All Bones to Layer", icon="SEQ_STRIP_DUPLICATE")
 
     # draw_action_bakery(self, context, layout)
 
 
 class CGD_PT_Deform_Rig_Side_Panel(bpy.types.Panel):
 
-    bl_label = "GRT: Armature Tools"
+    bl_label = "GRT: Utility Tool"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_category = "Game Rig Tools"
-
+    bl_options = {"DEFAULT_CLOSED"}
 
 
 
     def draw(self, context):
         layout = self.layout
         draw_panel(self, context, layout)
-        draw_armature_visibility_options(self, context, layout)
 
 
 
@@ -218,42 +241,6 @@ def POLL_Control_Armature(self, obj):
     else:
         return False
 
-def UPDATE_active_to_control_rig(self, context):
-
-
-    if context.object:
-        if context.object.type == "ARMATURE":
-
-            if not context.object == self.GameRig:
-                self.ControlRig = context.object
-
-    if self.active_to_control_rig:
-        self.active_to_control_rig = False
-
-
-def UPDATE_active_to_game_rig(self, context):
-
-
-    if context.object:
-        if context.object.type == "ARMATURE":
-
-            if not context.object == self.ControlRig:
-                self.GameRig = context.object
-
-    if self.active_to_game_rig:
-        self.active_to_game_rig = False
-
-
-
-class GRT_Settings(bpy.types.PropertyGroup):
-
-    ControlRig: bpy.props.PointerProperty(type=bpy.types.Object, poll=POLL_Control_Armature)
-    GameRig: bpy.props.PointerProperty(type=bpy.types.Object, poll=POLL_Game_Armature)
-
-    active_to_control_rig: bpy.props.BoolProperty(default=False, update=UPDATE_active_to_control_rig)
-    active_to_game_rig: bpy.props.BoolProperty(default=False, update=UPDATE_active_to_game_rig)
-
-    Show_GameRigTools: bpy.props.BoolProperty(default=True)
 
 
 
@@ -263,8 +250,7 @@ class GRT_Settings(bpy.types.PropertyGroup):
 
 
 
-
-classes = [GRT_Settings, CGD_PT_Deform_Rig_Side_Panel]
+classes = [CGD_PT_Deform_Rig_Side_Panel]
 
 
 def register():
@@ -272,14 +258,12 @@ def register():
     for cls in classes:
         bpy.utils.register_class(cls)
 
-    bpy.types.Scene.GRT_Settings = bpy.props.PointerProperty(type=GRT_Settings)
 
 
 def unregister():
     for cls in classes:
         bpy.utils.unregister_class(cls)
 
-    del bpy.types.Scene.GRT_Settings
 
 if __name__ == "__main__":
     register()

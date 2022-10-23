@@ -70,13 +70,25 @@ class GRT_Generate_Game_Rig(bpy.types.Operator):
 
         layout = self.layout
 
+        scn = context.scene
 
         col = layout.column(align=True)
 
 
+
+        scn = context.scene
+        Global_Settings = scn.GRT_Action_Bakery_Global_Settings
+        Action_Bakery = scn.GRT_Action_Bakery
+
+        control_rig = Global_Settings.Source_Armature
+        deform_rig = Global_Settings.Target_Armature
+
+
+
+
         if self.Use_Regenerate_Rig:
 
-            col.prop(context.scene.GRT_Settings,"GameRig", text="Game Rig", icon="ARMATURE_DATA")
+            col.prop(Global_Settings,"Target_Armature", text="Game Rig", icon="ARMATURE_DATA")
 
 
         else:
@@ -99,6 +111,8 @@ class GRT_Generate_Game_Rig(bpy.types.Operator):
 
         layout.separator()
 
+
+
         layout.prop(self, "Deform_Bind_to_Deform_Rig", text="Bind to Control Rig")
 
         if self.Deform_Bind_to_Deform_Rig:
@@ -110,6 +124,11 @@ class GRT_Generate_Game_Rig(bpy.types.Operator):
 
 
         if Utility.draw_subpanel(self, self.Show_Advanced, "Show_Advanced", "Advanced", layout):
+
+
+
+
+
 
 
             layout.label(text="Control Rig")
@@ -151,12 +170,19 @@ class GRT_Generate_Game_Rig(bpy.types.Operator):
 
         object = context.object
 
+        scn = context.scene
+        Global_Settings = scn.GRT_Action_Bakery_Global_Settings
+        Action_Bakery = scn.GRT_Action_Bakery
+
+        control_rig = Global_Settings.Source_Armature
+        deform_rig = Global_Settings.Target_Armature
+
 
         if not self.Use_Legacy:
             # if self.Use_Regenerate_Rig:
             #     object = context.scene.GRT_Settings.ControlRig
 
-            object = context.scene.GRT_Settings.ControlRig
+            object = control_rig
 
 
         if object:
@@ -180,13 +206,15 @@ class GRT_Generate_Game_Rig(bpy.types.Operator):
 
                 if not self.Use_Legacy:
                     if self.Use_Regenerate_Rig:
-                        game_rig = context.scene.GRT_Settings.GameRig
+                        game_rig = deform_rig
+                        game_rig.hide_set(False)
+                        game_rig.hide_viewport = False
 
                 if not game_rig:
                     game_rig = object.copy()
                     game_rig.name = self.Deform_Armature_Name
                     if not self.Use_Legacy:
-                        context.scene.GRT_Settings.GameRig = game_rig
+                        Global_Settings.Target_Armature = game_rig
 
                 game_rig.display_type = "SOLID"
                 game_rig.show_in_front = True

@@ -15,6 +15,13 @@ def update_panel(self, context):
     message = ": Updating Panel locations has failed"
     try:
 
+        if "bl_rna" in GRT_Action_Bakery.GRT_PT_Action_Bakery.__dict__:
+            bpy.utils.unregister_class(GRT_Action_Bakery.GRT_PT_Action_Bakery)
+
+        GRT_Action_Bakery.GRT_PT_Action_Bakery.bl_category = addon_preferences.action_bakery_panel_name
+        bpy.utils.register_class(GRT_Action_Bakery.GRT_PT_Action_Bakery)
+
+
         if "bl_rna" in Deform_Rig_Panel.CGD_PT_Deform_Rig_Side_Panel.__dict__:
             bpy.utils.unregister_class(Deform_Rig_Panel.CGD_PT_Deform_Rig_Side_Panel)
 
@@ -23,11 +30,6 @@ def update_panel(self, context):
         bpy.utils.register_class(Deform_Rig_Panel.CGD_PT_Deform_Rig_Side_Panel)
 
 
-        if "bl_rna" in GRT_Action_Bakery.GRT_PT_Action_Bakery.__dict__:
-            bpy.utils.unregister_class(GRT_Action_Bakery.GRT_PT_Action_Bakery)
-
-        GRT_Action_Bakery.GRT_PT_Action_Bakery.bl_category = addon_preferences.action_bakery_panel_name
-        bpy.utils.register_class(GRT_Action_Bakery.GRT_PT_Action_Bakery)
 
 
     except Exception as e:
@@ -61,8 +63,8 @@ class CGD_user_preferences(bpy.types.AddonPreferences):
 
     def draw(self, context):
         layout = self.layout
-        layout.prop(self, "game_rig_tool_panel_name", text="Game Rig Tool Tab")
-        layout.prop(self, "action_bakery_panel_name", text="Action Bakery Tab")
+        layout.prop(self, "action_bakery_panel_name", text="Game Rig Tool Tab")
+        layout.prop(self, "game_rig_tool_panel_name", text="Utility Tab")
 
 
         layout.prop(self, "toogle_constraints", text="Top Bar Toogle Constraint")

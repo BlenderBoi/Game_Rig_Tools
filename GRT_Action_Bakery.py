@@ -290,7 +290,7 @@ class GRT_UL_Action_Bakery_List(bpy.types.UIList):
 
 class GRT_PT_Action_Bakery(bpy.types.Panel):
 
-    bl_label = "GRT: Action Bakery"
+    bl_label = "Game Rig Tools"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_category = "Game Rig Tools"
@@ -313,203 +313,45 @@ class GRT_PT_Action_Bakery(bpy.types.Panel):
         scn = context.scene
 
 
+        addon_preferences = context.preferences.addons[addon_name].preferences
+
+
         row = layout.row(align=True)
-        col2 = row.column(align=True)
-        col2.template_list("GRT_UL_Action_Bakery_List", "", scn, "GRT_Action_Bakery", scn, "GRT_Action_Bakery_Index")
 
-        col = row.column(align=True)
+        operator = row.operator("gamerigtool.toogle_constraint", text="Mute", icon="HIDE_ON")
+        operator.mute = True
+        operator.use_selected = addon_preferences.use_selected
 
-        Operator = col.operator("gamerigtool.action_bakery_list_operator", text="", icon="ADD")
-        Operator.operation = "ADD"
-        Operator.index = scn.GRT_Action_Bakery_Index
+        operator = row.operator("gamerigtool.toogle_constraint", text="Unmute", icon="HIDE_OFF")
+        operator.mute = False
+        operator.use_selected = addon_preferences.use_selected
 
-        Operator = col.operator("gamerigtool.action_bakery_list_operator", text="", icon="REMOVE")
-        Operator.operation = "REMOVE"
-        Operator.index = scn.GRT_Action_Bakery_Index
-
-        col.separator()
-        col.menu("GRT_MT_load_action_menu", text="", icon="DOWNARROW_HLT")
-        col.separator()
-
-        Operator = col.operator("gamerigtool.action_bakery_list_operator", text="", icon="TRIA_UP")
-        Operator.operation = "UP"
-        Operator.index = scn.GRT_Action_Bakery_Index
-
-        Operator = col.operator("gamerigtool.action_bakery_list_operator", text="", icon="TRIA_DOWN")
-        Operator.operation = "DOWN"
-        Operator.index = scn.GRT_Action_Bakery_Index
+        row.prop(addon_preferences, "use_selected", text="", icon="RESTRICT_SELECT_OFF")
 
 
-
-        # Operator = col.operator("gamerigtool.action_bakery_list_operator", text="", icon="SORTALPHA")
-        # Operator.operation = "LOAD_ACTION_BY_NAME"
-        #
-        #
-        #
-
-        # Operator = row2.operator("gamerigtool.action_bakery_list_operator", text="All Action", icon="IMPORT")
-        # Operator.operation = "LOAD_ALL_ACTIONS"
-        LOAD_ACTION_ENABLE = False
-        LOAD_NLA_ENABLE = False
-        object = context.object
-        if object:
-            if object.type == "ARMATURE":
-                if object.animation_data:
-                    if object.animation_data.action:
-                        LOAD_ACTION_ENABLE = True
-
-        if object:
-            if object.type == "ARMATURE":
-                if object.animation_data:
-                    LOAD_NLA_ENABLE = True
-
-        row2 = col2.row(align=True)
-
-        row3 = row2.row(align=True)
-        row3.enabled = True
-        row3.enabled = LOAD_ACTION_ENABLE
-        Operator = row3.operator("gamerigtool.action_bakery_list_operator", text="Active", icon="IMPORT")
-        Operator.operation = "LOAD_ACTIVE_ACTIONS"
-
-        row3 = row2.row(align=True)
-        row3.enabled = LOAD_NLA_ENABLE
-
-        Operator = row3.operator("gamerigtool.action_bakery_list_operator", text="From NLA", icon="NLA_PUSHDOWN")
-        Operator.operation = "LOAD_FROM_NLA"
-
-        row2 = col2.row(align=True)
-
-        Operator = row2.operator("gamerigtool.action_bakery_list_operator", text="Load All", icon="IMPORT")
-        Operator.operation = "LOAD_ALL_ACTIONS"
-
-        Operator = row2.operator("gamerigtool.action_bakery_list_operator", text="Clear All", icon="TRASH")
-        Operator.operation = "CLEAR_ALL_ACTIONS"
 
 
         Global_Settings = scn.GRT_Action_Bakery_Global_Settings
 
+        control_rig = Global_Settings.Source_Armature
+        deform_rig = Global_Settings.Target_Armature
 
 
 
-
-        if len(scn.GRT_Action_Bakery) > 0:
-            if scn.GRT_Action_Bakery_Index < len(scn.GRT_Action_Bakery):
-
-
-
-                active_baker = context.scene.GRT_Action_Bakery[scn.GRT_Action_Bakery_Index]
-
-                col2.prop(active_baker, "Action", text="")
-
-
-
-                # layout.separator()
-                #
-                # col = layout.column(align=True)
-                # col.label(text="Control Rig")
-                # col.prop(Global_Settings, "Source_Armature", text="")
-                # col.label(text="Game Rig")
-                # col.prop(Global_Settings, "Target_Armature", text="")
-                # col.prop(Global_Settings, "Bake_Popup", text="Use Operator Popup")
-
-                # if Utility.draw_subpanel(active_baker, active_baker.SHOW_Local_Settings, "SHOW_Local_Settings", "Local Settings", layout):
-
-                layout.label(text="Local Settings")
-
-                col3 = layout.column(align=True)
-                col3.prop(active_baker, "use_Local_Name", text="Set Baked Action name")
-
-                if active_baker.use_Local_Name:
-                    col3.prop(active_baker, "LOCAL_Baked_Name", text="")
-
-                # row3 = col3.row(align=True)
-                # row3.prop(active_baker, "use_loop", text="Loop", icon="FILE_REFRESH")
-
-                #
-                # if not active_baker.use_loop:
-                #
-
-                if active_baker.Action:
-                    col3.separator()
-                    col3.label(text="Frame Range")
-                    row3 = col3.row(align=True)
-                    row3.prop(active_baker, "Frame_Range_Mode", expand=True)
-
-                    if active_baker.Frame_Range_Mode == "ACTION":
-                        row3 = col3.row(align=True)
-                        # row3.prop(active_baker.Action, "frame_range", text="")
-                        row3.label(text="Start: " + str(active_baker.Action.frame_range[0]), icon="ACTION")
-                        row3.label(text="End: " + str(active_baker.Action.frame_range[1]), icon="ACTION")
-                        col3.separator()
-
-                    if active_baker.Frame_Range_Mode == "SET":
-                        row3 = col3.row(align=True)
-                        row3.prop(active_baker, "Set_FR_Start", text="Set Start")
-                        row3.prop(active_baker, "Set_FR_End", text="Set End")
-                        row3.operator("gamerigtool.action_bakery_set_frame_range_to_action", text="", icon="FILE_REFRESH").index = scn.GRT_Action_Bakery_Index
-                        col3.separator()
-
-                    if active_baker.Frame_Range_Mode == "TRIM":
-                        row3 = col3.row(align=True)
-                        row3.prop(active_baker, "Trim_FR_Start", text="Trim Start")
-                        row3.prop(active_baker, "Trim_FR_End", text="Trim End")
-
-                        row3 = col3.row(align=True)
-                        row3.label(text="Start: " + str(active_baker.Action.frame_range[0] + active_baker.Trim_FR_Start), icon="SCULPTMODE_HLT")
-                        row3.label(text="End: "+ str(active_baker.Action.frame_range[1] - active_baker.Trim_FR_End), icon="SCULPTMODE_HLT")
-                        col3.separator()
-
-                    col3.prop(active_baker, "offset_keyframe_to_frame_one", text="Offset to Frame One")
-                # if active_baker.use_Local_Trim:
-                #
-                #     col3.prop(active_baker, "LOCAL_Trim", text="Trim")
-
-
-
-
-                layout.separator()
-
-
-
-
-
-
-        layout.label(text="Bake Settings")
+        # layout.label(text="Bake Settings")
 
 
         col = layout.column(align=True)
         col.label(text="Control Rig")
-        col.prop(Global_Settings, "Source_Armature", text="")
+
+        row = col.row(align=True)
+        row.prop(Global_Settings, "Source_Armature", text="")
+        row.prop(Global_Settings, "active_to_control_rig", text="", icon="RESTRICT_SELECT_OFF")
+
         col.label(text="Game Rig")
-        col.prop(Global_Settings, "Target_Armature", text="")
-
-        layout.separator()
-
-
-        # box.label(text="Baked Name: " + Change_to_Baked_Name(context, item))
-        
-        if not Global_Settings.Source_Armature:
-            box = layout.box()
-            box.label(text="Select Control Rig", icon="ERROR")
-        if not Global_Settings.Target_Armature:
-            box = layout.box()
-            box.label(text="Select Game Rig", icon="ERROR")
-
-        for item in check_invalid_name(context):
-            box = layout.box()
-            box.label(text=item.Action.name, icon="ERROR")
-            box.label(text="Baked Action Have Same Action Name")
-            box.label(text="Possible Solutions:", icon="INFO")
-            box.label(text="A: Adjust Baked Name Settings")
-            box.label(text="B: Turn Off Overwrite")
-
-        row = layout.row(align=True)
-        row.operator("gamerigtool.bake_action_bakery")
-        row.prop(Global_Settings, "Bake_Popup", text="", icon="SETTINGS")
-
-        layout.prop(Global_Settings, "Overwrite", text="Overwrite")
-
-        layout.prop(Global_Settings, "Push_to_NLA", text="Push To NLA")
+        row = col.row(align=True)
+        row.prop(Global_Settings, "Target_Armature", text="")
+        row.prop(Global_Settings, "active_to_game_rig", text="", icon="RESTRICT_SELECT_OFF")
 
         layout.separator()
 
@@ -517,11 +359,259 @@ class GRT_PT_Action_Bakery(bpy.types.Panel):
 
 
 
+        col = layout.column(align=True)
+        col.scale_y = 2
+
+        if not control_rig:
+            col.enabled = False
+
+        if not deform_rig:
+            op = col.operator("gamerigtool.generate_game_rig", text="Generate Game Rig", icon="OUTLINER_OB_ARMATURE")
+            op.Use_Regenerate_Rig = False
+            op.Use_Legacy = False
+        else:
+            op = col.operator("gamerigtool.generate_game_rig", text="Regenerate Game Rig", icon="FILE_REFRESH")
+            op.Use_Regenerate_Rig = True
+            op.Use_Legacy = False
+
+        if not control_rig:
+            box = layout.box()
+            box.label(text="Select Control Rig", icon="INFO")
 
 
-        if Utility.draw_subpanel(Global_Settings, Global_Settings.SHOW_Bake_Settings, "SHOW_Bake_Settings", "Global Bake Settings", layout):
 
-            draw_global_bake_settings(layout, context)
+
+
+
+
+
+
+        # op = layout.operator("gamerigtool.generate_game_rig", text="Generate Game Rig (Legacy)", icon="OUTLINER_OB_ARMATURE")
+        # op.Use_Regenerate_Rig = False
+        # op.Use_Legacy = True
+
+
+
+        if Utility.draw_subpanel(Global_Settings, Global_Settings.Show_Action_Bakery, "Show_Action_Bakery", "Action Bakery", layout):
+
+
+            row = layout.row(align=True)
+            col2 = row.column(align=True)
+            col2.template_list("GRT_UL_Action_Bakery_List", "", scn, "GRT_Action_Bakery", scn, "GRT_Action_Bakery_Index")
+
+            col = row.column(align=True)
+
+            Operator = col.operator("gamerigtool.action_bakery_list_operator", text="", icon="ADD")
+            Operator.operation = "ADD"
+            Operator.index = scn.GRT_Action_Bakery_Index
+
+            Operator = col.operator("gamerigtool.action_bakery_list_operator", text="", icon="REMOVE")
+            Operator.operation = "REMOVE"
+            Operator.index = scn.GRT_Action_Bakery_Index
+
+            col.separator()
+            col.menu("GRT_MT_load_action_menu", text="", icon="DOWNARROW_HLT")
+            col.separator()
+
+            Operator = col.operator("gamerigtool.action_bakery_list_operator", text="", icon="TRIA_UP")
+            Operator.operation = "UP"
+            Operator.index = scn.GRT_Action_Bakery_Index
+
+            Operator = col.operator("gamerigtool.action_bakery_list_operator", text="", icon="TRIA_DOWN")
+            Operator.operation = "DOWN"
+            Operator.index = scn.GRT_Action_Bakery_Index
+
+
+
+            # Operator = col.operator("gamerigtool.action_bakery_list_operator", text="", icon="SORTALPHA")
+            # Operator.operation = "LOAD_ACTION_BY_NAME"
+            #
+            #
+            #
+
+            # Operator = row2.operator("gamerigtool.action_bakery_list_operator", text="All Action", icon="IMPORT")
+            # Operator.operation = "LOAD_ALL_ACTIONS"
+            LOAD_ACTION_ENABLE = False
+            LOAD_NLA_ENABLE = False
+            object = context.object
+            if object:
+                if object.type == "ARMATURE":
+                    if object.animation_data:
+                        if object.animation_data.action:
+                            LOAD_ACTION_ENABLE = True
+
+            if object:
+                if object.type == "ARMATURE":
+                    if object.animation_data:
+                        LOAD_NLA_ENABLE = True
+
+            row2 = col2.row(align=True)
+
+            row3 = row2.row(align=True)
+            row3.enabled = True
+            row3.enabled = LOAD_ACTION_ENABLE
+            Operator = row3.operator("gamerigtool.action_bakery_list_operator", text="Active", icon="IMPORT")
+            Operator.operation = "LOAD_ACTIVE_ACTIONS"
+
+            row3 = row2.row(align=True)
+            row3.enabled = LOAD_NLA_ENABLE
+
+            Operator = row3.operator("gamerigtool.action_bakery_list_operator", text="From NLA", icon="NLA_PUSHDOWN")
+            Operator.operation = "LOAD_FROM_NLA"
+
+            row2 = col2.row(align=True)
+
+            Operator = row2.operator("gamerigtool.action_bakery_list_operator", text="Load All", icon="IMPORT")
+            Operator.operation = "LOAD_ALL_ACTIONS"
+
+            Operator = row2.operator("gamerigtool.action_bakery_list_operator", text="Clear All", icon="TRASH")
+            Operator.operation = "CLEAR_ALL_ACTIONS"
+
+
+
+
+
+
+
+            if len(scn.GRT_Action_Bakery) > 0:
+                if scn.GRT_Action_Bakery_Index < len(scn.GRT_Action_Bakery):
+
+
+
+                    active_baker = context.scene.GRT_Action_Bakery[scn.GRT_Action_Bakery_Index]
+
+                    col2.prop(active_baker, "Action", text="")
+
+
+
+                    # layout.separator()
+                    #
+                    # col = layout.column(align=True)
+                    # col.label(text="Control Rig")
+                    # col.prop(Global_Settings, "Source_Armature", text="")
+                    # col.label(text="Game Rig")
+                    # col.prop(Global_Settings, "Target_Armature", text="")
+                    # col.prop(Global_Settings, "Bake_Popup", text="Use Operator Popup")
+
+                    # if Utility.draw_subpanel(active_baker, active_baker.SHOW_Local_Settings, "SHOW_Local_Settings", "Local Settings", layout):
+
+                    layout.label(text="Local Settings")
+
+                    col3 = layout.column(align=True)
+                    col3.prop(active_baker, "use_Local_Name", text="Set Baked Action name")
+
+                    if active_baker.use_Local_Name:
+                        col3.prop(active_baker, "LOCAL_Baked_Name", text="")
+
+                    # row3 = col3.row(align=True)
+                    # row3.prop(active_baker, "use_loop", text="Loop", icon="FILE_REFRESH")
+
+                    #
+                    # if not active_baker.use_loop:
+                    #
+
+                    if active_baker.Action:
+                        col3.separator()
+                        col3.label(text="Frame Range")
+                        row3 = col3.row(align=True)
+                        row3.prop(active_baker, "Frame_Range_Mode", expand=True)
+
+                        if active_baker.Frame_Range_Mode == "ACTION":
+                            row3 = col3.row(align=True)
+                            # row3.prop(active_baker.Action, "frame_range", text="")
+                            row3.label(text="Start: " + str(active_baker.Action.frame_range[0]), icon="ACTION")
+                            row3.label(text="End: " + str(active_baker.Action.frame_range[1]), icon="ACTION")
+                            col3.separator()
+
+                        if active_baker.Frame_Range_Mode == "SET":
+                            row3 = col3.row(align=True)
+                            row3.prop(active_baker, "Set_FR_Start", text="Set Start")
+                            row3.prop(active_baker, "Set_FR_End", text="Set End")
+                            row3.operator("gamerigtool.action_bakery_set_frame_range_to_action", text="", icon="FILE_REFRESH").index = scn.GRT_Action_Bakery_Index
+                            col3.separator()
+
+                        if active_baker.Frame_Range_Mode == "TRIM":
+                            row3 = col3.row(align=True)
+                            row3.prop(active_baker, "Trim_FR_Start", text="Trim Start")
+                            row3.prop(active_baker, "Trim_FR_End", text="Trim End")
+
+                            row3 = col3.row(align=True)
+                            row3.label(text="Start: " + str(active_baker.Action.frame_range[0] + active_baker.Trim_FR_Start), icon="SCULPTMODE_HLT")
+                            row3.label(text="End: "+ str(active_baker.Action.frame_range[1] - active_baker.Trim_FR_End), icon="SCULPTMODE_HLT")
+                            col3.separator()
+
+                        col3.prop(active_baker, "offset_keyframe_to_frame_one", text="Offset to Frame One")
+                    # if active_baker.use_Local_Trim:
+                    #
+                    #     col3.prop(active_baker, "LOCAL_Trim", text="Trim")
+
+
+
+
+                    layout.separator()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            # box.label(text="Baked Name: " + Change_to_Baked_Name(context, item))
+            
+            if not Global_Settings.Source_Armature:
+                box = layout.box()
+                box.label(text="Select Control Rig", icon="ERROR")
+            if not Global_Settings.Target_Armature:
+                box = layout.box()
+                box.label(text="Select Game Rig", icon="ERROR")
+
+            for item in check_invalid_name(context):
+                box = layout.box()
+                box.label(text=item.Action.name, icon="ERROR")
+                box.label(text="Baked Action Have Same Action Name")
+                box.label(text="Possible Solutions:", icon="INFO")
+                box.label(text="A: Adjust Baked Name Settings")
+                box.label(text="B: Turn Off Overwrite")
+
+            row = layout.row(align=True)
+
+            col = row.column(align=True)
+            col.scale_y = 2
+            row2 = col.row(align=True)
+            row2.operator("gamerigtool.bake_action_bakery", icon="KEYTYPE_KEYFRAME_VEC")
+            row2.prop(Global_Settings, "Bake_Popup", text="", icon="SETTINGS")
+
+            layout.prop(Global_Settings, "Overwrite", text="Overwrite")
+
+            layout.prop(Global_Settings, "Push_to_NLA", text="Push To NLA")
+
+            layout.separator()
+
+
+
+
+
+
+
+            if Utility.draw_subpanel(Global_Settings, Global_Settings.SHOW_Bake_Settings, "SHOW_Bake_Settings", "Global Bake Settings", layout):
+
+                draw_global_bake_settings(layout, context)
 
 def draw_global_bake_settings(layout, context):
 
@@ -635,7 +725,44 @@ class GRT_Action_Bakery_Property_Group(bpy.types.PropertyGroup):
     # use_loop: bpy.props.BoolProperty()
     LOCAL_Trim: bpy.props.IntProperty(min=0)
 
+
+def UPDATE_active_to_control_rig(self, context):
+
+
+    if context.object:
+        if context.object.type == "ARMATURE":
+
+            if not context.object == self.Target_Armature:
+                self.Source_Armature= context.object
+
+    if self.active_to_control_rig:
+        self.active_to_control_rig = False
+
+
+def UPDATE_active_to_game_rig(self, context):
+
+
+    if context.object:
+        if context.object.type == "ARMATURE":
+
+            if not context.object == self.Source_Armature:
+                self.Target_Armature= context.object
+
+    if self.active_to_game_rig:
+        self.active_to_game_rig = False
+
+
+
+
+
+
+
 ENUM_Baked_Name_Mode = [("SUFFIX","Suffix","Suffix"),("PREFIX","Prefix","Prefix"),("REPLACE","Replace","Replace")]
+
+
+
+
+
 
 class GRT_Action_Bakery_Global_Settings_Property_Group(bpy.types.PropertyGroup):
 
@@ -667,6 +794,24 @@ class GRT_Action_Bakery_Global_Settings_Property_Group(bpy.types.PropertyGroup):
     BAKE_SETTINGS_Do_Constraint_Clear: bpy.props.BoolProperty(default=False)
     BAKE_SETTINGS_Do_Parent_Clear: bpy.props.BoolProperty(default=False)
     BAKE_SETTINGS_Do_Clean: bpy.props.BoolProperty(default=False)
+
+    active_to_control_rig: bpy.props.BoolProperty(default=False, update=UPDATE_active_to_control_rig)
+    active_to_game_rig: bpy.props.BoolProperty(default=False, update=UPDATE_active_to_game_rig)
+
+    Show_Action_Bakery: bpy.props.BoolProperty(default=False)
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 def Change_to_Baked_Name(context, item):
