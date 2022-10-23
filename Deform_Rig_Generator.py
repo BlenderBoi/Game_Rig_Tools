@@ -18,6 +18,10 @@ class GRT_Generate_Game_Rig(bpy.types.Operator):
     bl_options = {'UNDO', 'PRESET'}
 
 
+    Use_Regenerate_Rig: bpy.props.BoolProperty(default=False)
+    Use_Legacy: bpy.props.BoolProperty(default=False)
+
+
     Extract_Mode: bpy.props.EnumProperty(items=ENUM_Extract_Mode, default="DEFORM")
     Flat_Hierarchy: bpy.props.BoolProperty(default=False)
     Disconnect_Bone: bpy.props.BoolProperty(default=True)
@@ -67,7 +71,20 @@ class GRT_Generate_Game_Rig(bpy.types.Operator):
         layout = self.layout
 
 
-        layout.prop(self, "Deform_Armature_Name", text="Name")
+        col = layout.column(align=True)
+
+
+        if self.Use_Regenerate_Rig:
+
+            col.prop(context.scene.GRT_Settings,"GameRig", text="Game Rig", icon="ARMATURE_DATA")
+
+
+        else:
+            col.prop(self, "Deform_Armature_Name", text="Name")
+
+        if not self.Use_Legacy:
+            col.prop(self, "Use_Regenerate_Rig", text="Regenerate Rig", icon="FILE_REFRESH")
+
 
         layout.prop(self, "Flat_Hierarchy", text="Flat Hierarchy")
         layout.prop(self, "Disconnect_Bone", text="Disconnect Bones")
@@ -83,6 +100,7 @@ class GRT_Generate_Game_Rig(bpy.types.Operator):
         layout.separator()
 
         layout.prop(self, "Deform_Bind_to_Deform_Rig", text="Bind to Control Rig")
+
         if self.Deform_Bind_to_Deform_Rig:
             layout.prop(self, "Parent_To_Deform_Rig", text="Parent Mesh Object to Game Rig")
 
@@ -133,6 +151,14 @@ class GRT_Generate_Game_Rig(bpy.types.Operator):
 
         object = context.object
 
+
+        if not self.Use_Legacy:
+            # if self.Use_Regenerate_Rig:
+            #     object = context.scene.GRT_Settings.ControlRig
+
+            object = context.scene.GRT_Settings.ControlRig
+
+
         if object:
 
             if object.type == "ARMATURE":
@@ -150,14 +176,25 @@ class GRT_Generate_Game_Rig(bpy.types.Operator):
 
 
 
+                game_rig = None
 
+                if not self.Use_Legacy:
+                    if self.Use_Regenerate_Rig:
+                        game_rig = context.scene.GRT_Settings.GameRig
 
-                game_rig = object.copy()
+                if not game_rig:
+                    game_rig = object.copy()
+                    game_rig.name = self.Deform_Armature_Name
+                    if not self.Use_Legacy:
+                        context.scene.GRT_Settings.GameRig = game_rig
+
                 game_rig.display_type = "SOLID"
                 game_rig.show_in_front = True
-                game_rig.name = self.Deform_Armature_Name
-                game_rig.data = game_rig.data.copy()
-                bpy.context.collection.objects.link(game_rig)
+                game_rig.data = object.data.copy()
+
+                if not bpy.context.collection.objects.get(game_rig.name):
+
+                    bpy.context.collection.objects.link(game_rig)
 
                 bpy.ops.object.select_all(action='DESELECT')
                 game_rig.select_set(True)

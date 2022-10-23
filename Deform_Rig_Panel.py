@@ -100,9 +100,52 @@ def draw_panel(self, context, layout):
     row.prop(addon_preferences, "use_selected", text="", icon="RESTRICT_SELECT_OFF")
 
 
-    layout.label(text="Game Rig Tool")
+    # layout.label(text="Game Rig Tool")
 
-    layout.operator("gamerigtool.generate_game_rig", text="Generate Game Rig")
+    # def draw_subpanel(self, boolean, property, label, layout):
+
+    box = layout.box()
+    if Utility.draw_subpanel(context.scene.GRT_Settings, context.scene.GRT_Settings.Show_GameRigTools, "Show_GameRigTools", "Game Rig Tools", box):
+
+        box.label(text="Control Rig")
+        row = box.row(align=True)
+        row.prop(context.scene.GRT_Settings, "ControlRig", text="", icon="ARMATURE_DATA")
+        row.prop(context.scene.GRT_Settings, "active_to_control_rig", text="", icon="RESTRICT_SELECT_OFF")
+        box.label(text="Game Rig")
+        row = box.row(align=True)
+        row.prop(context.scene.GRT_Settings, "GameRig", text="", icon="OUTLINER_OB_ARMATURE")
+        row.prop(context.scene.GRT_Settings, "active_to_game_rig", text="", icon="RESTRICT_SELECT_OFF")
+
+        box.separator()
+
+
+    
+    
+        col = box.column()
+
+        if not context.scene.GRT_Settings.ControlRig:
+            col.enabled = False
+
+        if not context.scene.GRT_Settings.GameRig:
+            op = col.operator("gamerigtool.generate_game_rig", text="Generate Game Rig", icon="FILE_REFRESH")
+            op.Use_Regenerate_Rig = False
+            op.Use_Legacy = False
+        else:
+            op = col.operator("gamerigtool.generate_game_rig", text="Regenerate Game Rig", icon="FILE_REFRESH")
+            op.Use_Regenerate_Rig = True
+            op.Use_Legacy = False
+
+        if not context.scene.GRT_Settings.ControlRig:
+            box.label(text="Select Control Rig", icon="INFO")
+
+
+
+    layout.separator()
+    op = layout.operator("gamerigtool.generate_game_rig", text="Generate Game Rig (Legacy)")
+    op.Use_Regenerate_Rig = False
+    op.Use_Legacy = True
+    # op = layout.operator("gamerigtool.generate_game_rig", text="Legacy Generate")
+    # op.Use_Regenerate_Rig = False
 
     if Utility.draw_subpanel(addon_preferences, addon_preferences.show_utility, "show_utility", "Utility Tools", layout):
 
@@ -144,19 +187,6 @@ class CGD_PT_Deform_Rig_Side_Panel(bpy.types.Panel):
     bl_region_type = 'UI'
     bl_category = "Game Rig Tools"
 
-    # @classmethod
-    # def poll(cls, context):
-    #
-    #     addon_preferences = context.preferences.addons[addon_name].preferences
-        #
-        # if context.object:
-        #     if context.object.type == "ARMATURE":
-
-
-        # if addon_preferences.side_panel:
-        #     return True
-        # else:
-        #     return False
 
 
 
@@ -166,7 +196,75 @@ class CGD_PT_Deform_Rig_Side_Panel(bpy.types.Panel):
         draw_armature_visibility_options(self, context, layout)
 
 
-classes = [CGD_PT_Deform_Rig_Side_Panel]
+
+
+def POLL_Game_Armature(self, obj):
+    if obj.type == "ARMATURE":
+        if obj == self.ControlRig:
+            return False
+
+        return True
+
+    else:
+        return False
+
+def POLL_Control_Armature(self, obj):
+    if obj.type == "ARMATURE":
+        if obj == self.GameRig:
+            return False
+
+        return True
+
+    else:
+        return False
+
+def UPDATE_active_to_control_rig(self, context):
+
+
+    if context.object:
+        if context.object.type == "ARMATURE":
+
+            if not context.object == self.GameRig:
+                self.ControlRig = context.object
+
+    if self.active_to_control_rig:
+        self.active_to_control_rig = False
+
+
+def UPDATE_active_to_game_rig(self, context):
+
+
+    if context.object:
+        if context.object.type == "ARMATURE":
+
+            if not context.object == self.ControlRig:
+                self.GameRig = context.object
+
+    if self.active_to_game_rig:
+        self.active_to_game_rig = False
+
+
+
+class GRT_Settings(bpy.types.PropertyGroup):
+
+    ControlRig: bpy.props.PointerProperty(type=bpy.types.Object, poll=POLL_Control_Armature)
+    GameRig: bpy.props.PointerProperty(type=bpy.types.Object, poll=POLL_Game_Armature)
+
+    active_to_control_rig: bpy.props.BoolProperty(default=False, update=UPDATE_active_to_control_rig)
+    active_to_game_rig: bpy.props.BoolProperty(default=False, update=UPDATE_active_to_game_rig)
+
+    Show_GameRigTools: bpy.props.BoolProperty(default=True)
+
+
+
+
+
+
+
+
+
+
+classes = [GRT_Settings, CGD_PT_Deform_Rig_Side_Panel]
 
 
 def register():
@@ -174,12 +272,14 @@ def register():
     for cls in classes:
         bpy.utils.register_class(cls)
 
+    bpy.types.Scene.GRT_Settings = bpy.props.PointerProperty(type=GRT_Settings)
 
 
 def unregister():
     for cls in classes:
         bpy.utils.unregister_class(cls)
 
+    del bpy.types.Scene.GRT_Settings
 
 if __name__ == "__main__":
     register()
