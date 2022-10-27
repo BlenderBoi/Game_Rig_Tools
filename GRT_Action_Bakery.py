@@ -828,11 +828,11 @@ def Change_to_Baked_Name(context, item):
         if item.use_Local_Name:
             name = item.LOCAL_Baked_Name
         else: 
-            if Settings.GLOBAL_Baked_Name_Mode == "Suffix":
-                name = Settings.GLOBAL_Baked_Name_01 + item.Action.name
+            if Settings.GLOBAL_Baked_Name_Mode == "SUFFIX":
+                name = item.Action.name + Settings.GLOBAL_Baked_Name_01
             
             if Settings.GLOBAL_Baked_Name_Mode == "PREFIX":
-                name = item.Action.name + Settings.GLOBAL_Baked_Name_01
+                name = Settings.GLOBAL_Baked_Name_01 + item.Action.name
         
             if Settings.GLOBAL_Baked_Name_Mode == "REPLACE":
                 name = item.Action.name.replace(Settings.GLOBAL_Baked_Name_01, Settings.GLOBAL_Baked_Name_02)
