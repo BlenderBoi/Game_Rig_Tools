@@ -2,9 +2,9 @@
 bl_info = {
     "name": "Game Rig Tools",
     "author": "BlenderBoi, Xin",
-    "version": (1, 9, 2),
+    "version": (1, 9, 3),
     "blender": (3, 00, 0),
-    "description": "Generate a Deform Rig base on CGDive's Game-Ready Rig Video",
+    "description": "Generate a Deform Rig base on CGDive's Game-Ready Rig Video, if you want to contribute to Game Rig Tools, the github page is: https://github.com/BlenderBoi/Game-Rig-Tools",
     "warning": "",
     "doc_url": "https://tarry-dill-523.notion.site/Game-Rig-Tools-Documentation-dc61839fd1d04147a42aa89e366575fb",
     "category": "Armature",

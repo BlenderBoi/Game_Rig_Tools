@@ -649,7 +649,7 @@ def draw_global_bake_settings(layout, context):
     layout.separator()
 
     layout.label(text="Settings")
-
+    layout.operator("gamerigtool.reset_bake_settings_to_default", text="Reset To Default", icon="FILE_REFRESH")
     layout.prop(Global_Settings, "Pre_Unmute_Constraint", text="Unmute Constraints Before Bake")
     layout.prop(Global_Settings, "Post_Mute_Constraint", text="Mute Constraints After Bake")
 
