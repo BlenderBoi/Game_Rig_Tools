@@ -1,4 +1,4 @@
-# Game_Rig_Tools
+# Game Rig Tools
 
 ![Banner](https://user-images.githubusercontent.com/79613445/210205543-38a792ed-361d-4ea7-a0ac-3455e16b2d1d.png)
 
