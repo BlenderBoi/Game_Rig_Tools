@@ -11,6 +11,28 @@ addon_name = os.path.basename(addon_directory)
 constraint_type = [("TRANSFORM","Copy Transform","Copy Transforms"),("LOTROT","Copy Location & Copy Rotation","Lot Rot"), ("NONE", "None (Do not Constraint)", "None")]
 ENUM_Extract_Mode = [("SELECTED","Selected","Selected"),("DEFORM","Deform","Deform"), ("SELECTED_DEFORM", "Selected Deform", "Selected Deform"), ("DEFORM_AND_SELECTED", "Deform and Selected", "Deform and Selected")]
 
+
+def get_deform(bone, bones):
+    bone_name = bone.name.replace("ORG-", "DEF-")
+    return bones.get(bone_name)
+
+def find_first_def(bone, bones):
+    if bone:
+        if get_deform(bone, bones):
+            if bone.parent:
+                if bone.parent.use_deform:
+                    return bone.parent
+
+
+def find_deform(bone, bones):
+    
+    if not "DEF-" in bone.name:
+        new_name = bone.name.replace("ORG-", "DEF-")
+        return bones.get(new_name)
+
+    
+
+
 class GRT_Generate_Game_Rig(bpy.types.Operator):
     """This will Generate a Deform Game Rig based on the step in CGDive Video"""
     bl_idname = "gamerigtool.generate_game_rig"
@@ -53,6 +75,7 @@ class GRT_Generate_Game_Rig(bpy.types.Operator):
 
     Show_Advanced: bpy.props.BoolProperty(default=False)
 
+    Rigify_Hierarchy_Fix: bpy.props.BoolProperty(default=False)
 #    RIGIFY_Disable_Stretch: bpy.props.BoolProperty(default=True)
 
     def invoke(self, context, event):
@@ -98,6 +121,7 @@ class GRT_Generate_Game_Rig(bpy.types.Operator):
             col.prop(self, "Use_Regenerate_Rig", text="Regenerate Rig", icon="FILE_REFRESH")
 
 
+        layout.prop(self, "Rigify_Hierarchy_Fix", text="Rigify Hierarchy Fix (FOR RIGIFY ONLY)")
         layout.prop(self, "Flat_Hierarchy", text="Flat Hierarchy")
         layout.prop(self, "Disconnect_Bone", text="Disconnect Bones")
 
@@ -230,6 +254,54 @@ class GRT_Generate_Game_Rig(bpy.types.Operator):
                 bpy.ops.object.mode_set(mode = 'EDIT')
 
                 Edit_Bones = game_rig.data.edit_bones
+
+                if self.Rigify_Hierarchy_Fix:
+                    for bone in Edit_Bones:
+
+
+                        if bone.use_deform:
+                            if bone.parent:
+                                if not bone.parent.use_deform:
+                                    recursive_parent = bone.parent_recursive
+                                    
+                                    for f in recursive_parent:
+                                        
+                                        if f.use_deform:
+                                            bone.parent = f
+                                            break
+                                        else:
+                                            b = find_deform(f, Edit_Bones)
+                                            if b:
+                                                if not b.name == bone.name:
+                                                    if b.use_deform:
+                                                        bone.parent = b
+                                                        break
+
+
+
+                                # if bone.name == bone.parent.name.replace("ORG-", "DEF-"):
+                                #     if bone.parent.parent:
+                                #         parent_bone = Edit_Bones.get(bone.parent.parent.name.replace("ORG-", "DEF-"))
+                                #         bone.parent = parent_bone
+
+                                # else:
+                                #     parent_bone = Edit_Bones.get(bone.parent.name.replace("ORG-", "DEF-"))
+
+                                #     if parent_bone:
+
+                                #         if parent_bone.use_deform:
+                                #             bone.parent = parent_bone
+                                #         else:
+                                #             if bone.parent.parent:
+                                #                 parent_bone = Edit_Bones.get(bone.parent.parent.name.replace("ORG-", "DEF-"))
+                                #                 if parent_bone:
+                                #                     if parent_bone.use_deform:
+                                #                         bone.parent = parent_bone
+
+
+
+
+
 
                 if self.Remove_Animation_Data:
 
