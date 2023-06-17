@@ -12,6 +12,7 @@ class GRT_Convert_Bendy_Bones_To_Bones(bpy.types.Operator):
     Scope: bpy.props.EnumProperty(items=ENUM_Scope)
     track_bone: bpy.props.BoolProperty(default=True)
     enable_stretch: bpy.props.BoolProperty(default=False)
+    align_edit_bones: bpy.props.BoolProperty(default=True)
 
     to_layer: bpy.props.IntProperty(default=31, max=31, min=0)
     move_to_layer: bpy.props.BoolProperty(default=True)
@@ -23,6 +24,7 @@ class GRT_Convert_Bendy_Bones_To_Bones(bpy.types.Operator):
 
         layout.prop(self, "track_bone", text="Use Track Bone")
         layout.prop(self, "enable_stretch", text="Enable Stretch")
+        layout.prop(self, "align_edit_bones", text="Align Edit Bones")
 
         layout.prop(self, "move_to_layer", text="Move To Layer")
 
@@ -140,6 +142,24 @@ class GRT_Convert_Bendy_Bones_To_Bones(bpy.types.Operator):
 
                         Bone_Pair = {"BendyBone": Bone.name, "Bones":BBone_Segment_Name}
                         Bone_Pairs.append(Bone_Pair)
+
+
+                if self.align_edit_bones:
+                    for Bone_Pair in Bone_Pairs:
+                        Convert_Bones = Bone_Pair["Bones"]
+                        Bendy_Bone = object.data.edit_bones.get(Bone_Pair["BendyBone"])
+                        Converted_Edit_Bones = [object.data.edit_bones.get(bone_name) for bone_name in Convert_Bones if object.data.edit_bones.get(bone_name)]
+
+                        if Bendy_Bone and len(Converted_Edit_Bones) > 0:
+
+                            for index, Converted_Edit_Bone in enumerate(Converted_Edit_Bones):
+
+                                if len(Converted_Edit_Bones) > index+1:
+
+                                    NextBone = Converted_Edit_Bones[index+1]
+                                    Converted_Edit_Bone.tail = NextBone.head
+
+
 
                 bpy.ops.object.mode_set(mode='POSE', toggle=False)
 

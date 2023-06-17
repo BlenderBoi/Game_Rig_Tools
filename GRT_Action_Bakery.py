@@ -75,6 +75,8 @@ class GRT_Action_Bakery_List_Operator(bpy.types.Operator):
             layout = self.layout
             layout.prop(self, "name_include", text="Name Include")
 
+        
+
     def invoke(self, context, event):
 
         if self.operation in ["ADD", "LOAD_ACTION_BY_NAME"]:
@@ -625,6 +627,8 @@ def draw_global_bake_settings(layout, context):
 
     col = layout.column(align=True)
 
+
+
     col.label(text="Baked Name")
 
     row = col.row(align=True)
@@ -652,6 +656,7 @@ def draw_global_bake_settings(layout, context):
     layout.operator("gamerigtool.reset_bake_settings_to_default", text="Reset To Default", icon="FILE_REFRESH")
     layout.prop(Global_Settings, "Pre_Unmute_Constraint", text="Unmute Constraints Before Bake")
     layout.prop(Global_Settings, "Post_Mute_Constraint", text="Mute Constraints After Bake")
+    layout.prop(Global_Settings, "GLOBAL_Clear_Transform_Before_Bake", text="Clear Transform Before Baking")
 
     layout.separator()
 
@@ -802,6 +807,7 @@ class GRT_Action_Bakery_Global_Settings_Property_Group(bpy.types.PropertyGroup):
 
 
 
+    GLOBAL_Clear_Transform_Before_Bake: bpy.props.BoolProperty(default=True)
 
 
 
@@ -858,6 +864,14 @@ def check_invalid_name(context):
                     check.append(item)
 
     return check
+
+def clear_pose(obj):
+    for n in obj.pose.bones:
+        n.location = (0, 0, 0)
+        n.rotation_quaternion = (1, 0, 0, 0)
+        n.rotation_axis_angle = (0, 0, 1, 0)
+        n.rotation_euler = (0, 0, 0)
+        n.scale = (1, 1, 1)
 
 
 class GRT_Bake_Action_Bakery(bpy.types.Operator):
@@ -930,6 +944,9 @@ class GRT_Bake_Action_Bakery(bpy.types.Operator):
 
         if control_rig and deform_rig:
 
+            if Global_Settings.GLOBAL_Clear_Transform_Before_Bake:
+                clear_pose(control_rig)
+                clear_pose(deform_rig)
 
 
             if control_rig.type == "ARMATURE" and deform_rig.type == "ARMATURE":
@@ -962,6 +979,7 @@ class GRT_Bake_Action_Bakery(bpy.types.Operator):
                                     constraint.mute = False
 
 
+
                         if Baker.Action:
                             if Baker.Bake_Select:
 
@@ -970,8 +988,12 @@ class GRT_Bake_Action_Bakery(bpy.types.Operator):
                                 # for nla_track in control_rig.animation_data.nla_tracks:
                                 #     nla_track.mute = True
 
+
                                 control_rig.animation_data.action = action
 
+                                if Global_Settings.GLOBAL_Clear_Transform_Before_Bake:
+                                    clear_pose(control_rig)
+                                    clear_pose(deform_rig)
 
 
 
@@ -1009,6 +1031,7 @@ class GRT_Bake_Action_Bakery(bpy.types.Operator):
 
                                 frame = [i for i in range(start_frame, end_frame)]
 
+                                context.scene.frame_current = start_frame
 
 
                                 # if Baker.use_Local_Trim:
@@ -1018,6 +1041,10 @@ class GRT_Bake_Action_Bakery(bpy.types.Operator):
 
 
                                 if Global_Settings.Overwrite:
+                                    check = bpy.data.actions.get(action_name)
+                                    if check:
+                                        bpy.data.actions.remove(check)
+                                        bpy.data.actions.new(action_name)
                                     obj_act = [[deform_rig, bpy.data.actions.get(action_name)]]
                                 else:
                                     obj_act = [[deform_rig, None]]

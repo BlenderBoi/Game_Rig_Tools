@@ -31,6 +31,13 @@ def find_deform(bone, bones):
         return bones.get(new_name)
 
     
+def get_root(bone):
+    if bone.parent:
+        return get_root(bone.parent)
+    else:
+        return bone
+
+
 
 
 class GRT_Generate_Game_Rig(bpy.types.Operator):
@@ -45,6 +52,10 @@ class GRT_Generate_Game_Rig(bpy.types.Operator):
 
 
     Extract_Mode: bpy.props.EnumProperty(items=ENUM_Extract_Mode, default="DEFORM")
+    Copy_Root_Scale: bpy.props.BoolProperty(default=True)
+    Root_Bone_Name: bpy.props.StringProperty(default="root")
+    Auto_Find_Root: bpy.props.BoolProperty(default=False)
+
     Flat_Hierarchy: bpy.props.BoolProperty(default=False)
     Disconnect_Bone: bpy.props.BoolProperty(default=True)
 
@@ -129,6 +140,12 @@ class GRT_Generate_Game_Rig(bpy.types.Operator):
         layout.label(text="Constraint Type:")
 
         layout.prop(self, "Constraint_Type", text="")
+        if self.Constraint_Type == "LOTROT":
+            layout.prop(self, "Copy_Root_Scale", text="Copy Root Scale")
+            if self.Copy_Root_Scale:
+                layout.prop(self, "Auto_Find_Root", text="Auto Find Root")
+                if not self.Auto_Find_Root:
+                    layout.prop(self, "Root_Bone_Name", text="Root Bone Name")
 
         layout.label(text="Extract Mode:")
         layout.prop(self, "Extract_Mode", text="")
@@ -425,6 +442,22 @@ class GRT_Generate_Game_Rig(bpy.types.Operator):
                         constraint = bone.constraints.new("COPY_ROTATION")
                         constraint.target = object
                         constraint.subtarget = object.data.bones.get(bone.name).name
+
+                        if self.Copy_Root_Scale:
+
+                            root = None
+
+                            if self.Auto_Find_Root:
+                                root = get_root(object.data.bones.get(bone.name))
+                            else:
+                                root = object.data.bones.get(self.Root_Bone_Name)
+
+        
+                            if root:
+                                constraint = bone.constraints.new("COPY_SCALE")
+                                constraint.target = object
+                                constraint.subtarget = root.name
+
 
                     if self.Constraint_Type == "NONE":
                         pass
