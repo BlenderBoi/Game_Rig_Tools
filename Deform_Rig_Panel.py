@@ -134,23 +134,24 @@ def draw_panel(self, context, layout):
     # layout.separator()
 
     # layout.label(text="Legacy", icon="INFO")
-    col = layout.column(align=True)
-    op = col.operator("gamerigtool.generate_game_rig", text="Generate Game Rig", icon="RESTRICT_SELECT_OFF")
-    col.scale_y = 2
-    op.Use_Regenerate_Rig = False
-    op.Use_Legacy = True
 
-    row = layout.row(align=True)
+    #col = layout.column(align=True)
+    #op = col.operator("gamerigtool.generate_game_rig", text="Generate Game Rig", icon="RESTRICT_SELECT_OFF")
+    #col.scale_y = 2
+    #op.Use_Regenerate_Rig = False
+    #op.Use_Legacy = True
 
-    operator = row.operator("gamerigtool.toogle_constraint", text="Mute", icon="HIDE_ON")
-    operator.mute = True
-    operator.use_selected = addon_preferences.use_selected
+    #row = layout.row(align=True)
 
-    operator = row.operator("gamerigtool.toogle_constraint", text="Unmute", icon="HIDE_OFF")
-    operator.mute = False
-    operator.use_selected = addon_preferences.use_selected
+    #operator = row.operator("gamerigtool.toogle_constraint", text="Mute", icon="HIDE_ON")
+    #operator.mute = True
+    #operator.use_selected = addon_preferences.use_selected
 
-    row.prop(addon_preferences, "use_selected", text="", icon="RESTRICT_SELECT_OFF")
+    #operator = row.operator("gamerigtool.toogle_constraint", text="Unmute", icon="HIDE_OFF")
+    #operator.mute = False
+    #operator.use_selected = addon_preferences.use_selected
+
+    #row.prop(addon_preferences, "use_selected", text="", icon="RESTRICT_SELECT_OFF")
 
 
 
