@@ -101,9 +101,20 @@ class GRT_Generate_Game_Rig(bpy.types.Operator):
 
     def invoke(self, context, event):
 
-        object = context.object
-        if object:
-            self.Deform_Armature_Name = object.name + "_deform"
+        scn = context.scene
+        Global_Settings = scn.GRT_Action_Bakery_Global_Settings
+        Action_Bakery = scn.GRT_Action_Bakery
+
+        control_rig = Global_Settings.Source_Armature
+        deform_rig = Global_Settings.Target_Armature
+    
+
+        if deform_rig:
+            self.Deform_Armature_Name = deform_rig.name
+        elif control_rig:
+            self.Deform_Armature_Name = control_rig.name + "_deform"
+
+
 
         return context.window_manager.invoke_props_dialog(self)
 
