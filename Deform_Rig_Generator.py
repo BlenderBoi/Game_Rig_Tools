@@ -22,7 +22,7 @@ def extract_mode_to_filter_expression(extract_mode, expression):
         case "DEFORM_AND_SELECTED":
             return lambda bone: bone.use_deform or bone.select
         case "EXPRESSION":
-            code = compile(expression, expression, 'eval')
+            code = compile(expression, "Extract Mode - Expression: `" + expression + "`", 'eval')
             return lambda bone: eval(code, {}, {"bone": bone})
 
 def get_deform(bone, bones):
