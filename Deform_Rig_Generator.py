@@ -9,7 +9,7 @@ addon_name = os.path.basename(addon_directory)
 
 
 constraint_type = [("TRANSFORM","Copy Transform","Copy Transforms"),("LOTROT","Copy Location & Copy Rotation","Lot Rot"), ("NONE", "None (Do not Constraint)", "None")]
-ENUM_Extract_Mode = [("SELECTED","Selected","Selected"),("DEFORM","Deform","Deform"), ("SELECTED_DEFORM", "Selected Deform", "Selected Deform"), ("DEFORM_AND_SELECTED", "Deform and Selected", "Deform and Selected")]
+ENUM_Extract_Mode = [("SELECTED","Selected","Selected"),("DEFORM","Deform","Deform"), ("SELECTED_DEFORM", "Selected Deform", "Selected Deform"), ("DEFORM_AND_SELECTED", "Deform and Selected", "Deform and Selected"), ("EXPRESSION", "Expression", "Expression")]
 
 
 def get_deform(bone, bones):
@@ -61,6 +61,7 @@ class GRT_Generate_Game_Rig(bpy.types.Operator):
 
 
     Extract_Mode: bpy.props.EnumProperty(items=ENUM_Extract_Mode, default="DEFORM")
+    Extract_Mode_Expression: bpy.props.StringProperty(default="bone.use_deform or bone.select")
     Copy_Root_Scale: bpy.props.BoolProperty(default=False)
     Root_Bone_Name: bpy.props.StringProperty(default="root")
     Root_Bone_Picker: bpy.props.BoolProperty(default=True)
@@ -196,6 +197,8 @@ class GRT_Generate_Game_Rig(bpy.types.Operator):
             box.separator()
             #box.label(text="Extract Mode:")
             box.prop(self, "Extract_Mode", text="")
+            if self.Extract_Mode == "EXPRESSION":
+                box.prop(self, "Extract_Mode_Expression", text="Expression")
 
             box.separator()
         layout.separator()
@@ -440,6 +443,11 @@ class GRT_Generate_Game_Rig(bpy.types.Operator):
 
                         if self.Extract_Mode == "DEFORM_AND_SELECTED":
                             if not bone.use_deform and not bone.select:
+                                Edit_Bones.remove(bone)
+
+                        if self.Extract_Mode == "EXPRESSION":
+                            # TODO compiled
+                            if not eval(self.Extract_Mode_Expression, {}, {"bone": bone}):
                                 Edit_Bones.remove(bone)
 
 
