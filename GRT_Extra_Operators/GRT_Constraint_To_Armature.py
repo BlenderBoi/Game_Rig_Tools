@@ -62,6 +62,10 @@ class GRT_Constraint_To_Armature(bpy.types.Operator):
 
                         if context.mode == "OBJECT":
 
+                            if self.Clear_Constraint:
+                                while len(bone.constraints) > 0:
+                                    bone.constraints.remove(bone.constraints[0])
+
                             if Target_Armature.pose.bones.get(bone.name):
 
                                 if self.Constraint_Type == "TRANSFORM":
