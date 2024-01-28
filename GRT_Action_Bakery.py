@@ -915,7 +915,10 @@ class GRT_Bake_Action_Bakery(bpy.types.Operator):
 
 
                                 if Global_Settings.Push_to_NLA:
-                                    deform_rig.animation_data.nla_tracks.new().strips.new(Baked_Action[0].name, int(Baked_Action[0].frame_range[0]), Baked_Action[0])
+                                    new_nla_track = deform_rig.animation_data.nla_tracks.new()
+                                    new_nla_track.strips.new(Baked_Action[0].name, int(Baked_Action[0].frame_range[0]), Baked_Action[0])
+                                    new_nla_track.name = Baked_Action[0].name
+                                    # previous line:  deform_rig.animation_data.nla_tracks.new().strips.new(Baked_Action[0].name, int(Baked_Action[0].frame_range[0]), Baked_Action[0])
                                     # deform_rig.animation_data.nla_tracks.new().strips.new(Baked_Action[0].name, action.frame_range[0], Baked_Action[0])
                                     # deform_rig.animation_data.nla_tracks.new().strips.new(Baked_Action[0].name, 0, Baked_Action[0])
 
